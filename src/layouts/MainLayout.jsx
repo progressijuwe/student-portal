@@ -1,16 +1,18 @@
-// src/layouts/MainLayout.jsx
 import { Outlet } from 'react-router-dom'
 import { Header } from '../sections/shared/Header'
-import { Footer } from '../sections/shared/Footer'
+import Sidebar  from '../sections/shared/Sidebar/Sidebar'
 
 export default function MainLayout() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <Footer />
+    <div className="flex min-h-screen w-full">
+      <Sidebar />
+      <div className='flex flex-col w-full overflow-y-auto'>
+        <Header />
+        <main className="flex-1 bg-[#F9F9FFFC]">
+          <Outlet />
+        </main>
+      </div>
+      
     </div>
   )
 }

@@ -31,7 +31,7 @@ export default function LoginPage(){
                 <img 
                     src={logo} 
                     alt='School Logo' 
-                    className='w-22.5 h-22.75'
+                    className='w-22.5 h-22.75 object-cover'
                 />
                 <h2 className='text-xl text-center font-semibold text-black'>
                     Welcome back, we've missed you!
@@ -63,12 +63,12 @@ export default function LoginPage(){
                     {error && (
                         <p className="text-red-500 text-xs text-center">{error}</p>
                     )}
-                    <button className='text-right text-sm font-semibold text-[#FE6201]'>Forgot Password?</button>
+                    <button type='button' className='text-right text-sm font-semibold text-[#FE6201]'>Forgot Password?</button>
                 </div>
                 <button 
                     type='submit'
                     disabled={loading}
-                    className='w-full py-3.5 bg-[#940002] rounded-sm text-white text-sm'
+                    className='w-full py-3.5 bg-brand-red rounded-sm text-white text-sm'
                 >
                     {loading ? 'Logging in...' : 'Log In'}
                 </button>
