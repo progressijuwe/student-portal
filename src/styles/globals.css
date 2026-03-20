@@ -1,6 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @import "tailwindcss";
 
+@theme {
+  --font-body: 'Inter', sans-serif;
 
-:root {
-  --color-brand: #0f172a;
+  --color-brand: #FFE9DB;
+  --color-brand-border: #F54900;
+}
+@layer base{
+  input, select{
+    outline: none;
+    border: none;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+  }
 }
