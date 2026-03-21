@@ -1,0 +1,99 @@
+
+/* hide event title, show only dot */
+.fc .fc-daygrid-event-dot { border-color: #f97316; }
+.fc .fc-event-title { display: none; }
+.fc .fc-daygrid-event { background: none; border: none; }
+
+/* header nav buttons */
+.fc .fc-button {
+  background: none !important;
+  border: none !important;
+  color: #111827 !important;
+  font-size: 0.5rem !important;
+  box-shadow: none !important;
+}
+.fc .fc-button:hover { color: #f97316 !important; }
+
+/* month title */
+.fc .fc-toolbar-title {
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+/* day headers */
+.fc .fc-col-header-cell-cushion {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: none;
+}
+
+/* day numbers */
+.fc .fc-daygrid-day-number {
+  font-size: 0.875rem;
+  color: #111827;
+  text-decoration: none;
+}
+
+/* greyed out days from other months */
+.fc .fc-day-other .fc-daygrid-day-number { color: #d1d5db; }
+
+/* remove default cell borders */
+.fc .fc-scrollgrid { border: none !important; }
+.fc .fc-scrollgrid td, .fc .fc-scrollgrid th { border: none !important; }
+
+/* today highlight */
+.fc .fc-day-today { background: none !important; }
+.fc .fc-day-today .fc-daygrid-day-number {
+  color: #f97316 !important;
+  font-weight: 700;
+}
+.fc-daygrid-event{
+    min-height: 0 !important;
+}
+.fc-daygrid-day-events {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.fc-daygrid-event-harness {
+  width: fit-content;
+  flex-shrink: 0;
+}
+.fc-scroller{
+    overflow: hidden !important;
+}
+.fc-scroller-liquid-absolute{
+    position: relative !important;
+}
+.fc-daygrid-day-top{
+    justify-content: center;
+}
+.fc-scrollgrid-sync-table,
+.fc table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+.fc {
+  width: 100%;
+  overflow: hidden;
+}
+
+.fc table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.fc .fc-scrollgrid-sync-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.fc .fc-col-header {
+  width: 100% !important;
+  table-layout: fixed !important;
+}

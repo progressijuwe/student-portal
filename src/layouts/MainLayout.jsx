@@ -4,7 +4,7 @@ import Sidebar  from '../sections/shared/Sidebar/Sidebar'
 
 export default function MainLayout() {
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex h-screen overflow-hidden w-full">
       <Sidebar />
       <div className='flex flex-col w-full overflow-y-auto'>
         <Header />

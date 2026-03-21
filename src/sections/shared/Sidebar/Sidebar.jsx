@@ -18,7 +18,7 @@ export default function Sidebar(){
                             key={item.path}
                             to={item.path}
                             end={item.path === '/'}
-                            className={({isActive}) => `w-full rounded-lg p-3 text-sm ${isActive ? 'bg-brand border-brand font-semibold text-[#FE6201]' : 'font-medium text-body border-0' }`}
+                            className={({isActive}) => `w-full rounded-lg p-3 text-sm ${isActive ? 'bg-brand border-brand font-semibold text-brand-orange' : 'font-medium text-body border-0' }`}
                         >
                             {item.text}
                         </NavLink>
