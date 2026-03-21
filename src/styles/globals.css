@@ -10,6 +10,13 @@
   --color-brand-red: #940002;
   --color-border: #D7D7D7;
 
+  --color-badge: #BFDFC8;
+  --color-badge-border: #005015;
+
+  --color-label: #616161;
+
+  --color-brand-orange: #FE6201;
+
   --color-body: #4B4B4B;
 }
 @layer base{
