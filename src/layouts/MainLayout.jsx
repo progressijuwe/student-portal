@@ -8,7 +8,7 @@ export default function MainLayout() {
       <Sidebar />
       <div className='flex flex-col w-full overflow-y-auto'>
         <Header />
-        <main className="flex-1 bg-[#F9F9FFFC]">
+        <main className="flex-1 font-body bg-[#F9F9FFFC]">
           <Outlet />
         </main>
       </div>

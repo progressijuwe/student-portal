@@ -63,7 +63,7 @@ export default function LoginPage(){
                     {error && (
                         <p className="text-red-500 text-xs text-center">{error}</p>
                     )}
-                    <button type='button' className='text-right text-sm font-semibold text-[#FE6201]'>Forgot Password?</button>
+                    <button type='button' className='text-right text-sm font-semibold text-brand-orange'>Forgot Password?</button>
                 </div>
                 <button 
                     type='submit'
