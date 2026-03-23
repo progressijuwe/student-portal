@@ -1,4 +1,5 @@
 import ClassCalendar from "../sections/dashboard/ClassCalendar";
+import Enrolled from "../sections/dashboard/Enrolled";
 import GpaChart from "../sections/dashboard/GpaChart";
 import StatCards from "../sections/dashboard/StatCards";
 
@@ -13,6 +14,7 @@ export default function DashboardPage() {
           <GpaChart />
           <ClassCalendar />
         </div>
+        <Enrolled />
       </div>
     </div>
   )

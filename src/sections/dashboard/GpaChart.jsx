@@ -82,7 +82,7 @@ export default function GpaChart(){
                 <h2 className="font-medium text-sm text-black">Grade Point Average</h2>
                 <p className="text-xs font-medium text-label">Track your grade point average</p>
             </div>
-            <div className='h-full w-full'>
+            <div className='max-h-50 md:max-h-full h-full w-full'>
                 <Line data={data} options={options} plugins={[chartAreaBackground]}/>
             </div>
         </section>

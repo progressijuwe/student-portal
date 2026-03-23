@@ -16,7 +16,7 @@ const classes = [
 
 export default function ClassCalendar() {
     return (
-        <div className="bg-white border border-brand-orange rounded-[20px] p-4 flex flex-col gap-4 w-full lg:w-1/3 min-w-0">
+        <div className="bg-white border border-brand-orange rounded-[20px] p-4 flex flex-col gap-4 w-full lg:w-1/3 min-w-0 h-fit">
             <div className="flex justify-between items-center">
                 <h3 className="text-sm font-medium text-black">Calendar</h3>
                 <button className="text-[10px] font-semibold text-brand-red">View Timetable</button>
@@ -30,12 +30,14 @@ export default function ClassCalendar() {
                     right: 'next',
                 }}
                 events={classes}
+                height={380}
                 displayEventTime={false}
                 eventDisplay="list-item"
                 dayMaxEvents={false}
-                height={380}
-                contentHeight={380}
-                expandRows={true}
+                expandRows={false}
+                eventContent={() => (
+                    <span className="block w-1.5 h-1.5 rounded-full bg-brand-orange" />
+                )}
                 eventClassNames={({ event, view }) => {
                     const eventMonth = event.start.getMonth()
                     const viewMonth = view.currentStart.getMonth()
