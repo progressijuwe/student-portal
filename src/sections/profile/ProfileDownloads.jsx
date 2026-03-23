@@ -18,7 +18,7 @@ export default function ProfileDownloads(){
             </span>
             <div className='py-7 px-9.5 flex flex-col gap-4.5 bg-white rounded-[10px]'>
                 {downloads.map((record) => (
-                    <div className='flex items-center justify-between'>
+                    <div className='flex items-center justify-between' key={record.label}>
                         <div className='flex gap-2.5 items-center'>
                             {record.icon}
                             <div>
