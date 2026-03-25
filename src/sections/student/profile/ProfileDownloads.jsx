@@ -1,7 +1,7 @@
-import Files from '../../assets/svg/files.svg?react'
-import Transcript from '../../assets/svg/transcript.svg?react'
-import Date from '../../assets/svg/date.svg?react'
-import Download from '../../assets/svg/download.svg?react'
+import Files from '../../../assets/svg/files.svg?react'
+import Transcript from '../../../assets/svg/transcript.svg?react'
+import Date from '../../../assets/svg/date.svg?react'
+import Download from '../../../assets/svg/download.svg?react'
 
 const downloads = [
     {icon: <Transcript />, label: "Unofficial Transcript", docType: "pdf", lastUpdated: "4 wks ago"},

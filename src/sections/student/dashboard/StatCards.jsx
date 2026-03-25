@@ -1,8 +1,8 @@
-import Card from '../../components/ui/Card'
-import TimelineIcon from '../../assets/svg/timeline.svg?react'
-import BadgeIcon from '../../assets/svg/badge.svg?react'
-import CalendarIcon from '../../assets/svg/calendar.svg?react'
-import PeopleIcon from '../../assets/svg/people.svg?react'
+import Card from '../../../components/ui/Card'
+import TimelineIcon from '../../../assets/svg/timeline.svg?react'
+import BadgeIcon from '../../../assets/svg/badge.svg?react'
+import CalendarIcon from '../../../assets/svg/calendar.svg?react'
+import PeopleIcon from '../../../assets/svg/people.svg?react'
 
 const countAttended = 88
 const countTotal = 102

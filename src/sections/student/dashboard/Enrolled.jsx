@@ -1,5 +1,5 @@
-import laptop from '../../assets/images/laptop.png'
-import bars from '../../assets/images/bars.png'
+import laptop from '../../../assets/images/laptop.png'
+import bars from '../../../assets/images/bars.png'
 
 const courses = [
     {

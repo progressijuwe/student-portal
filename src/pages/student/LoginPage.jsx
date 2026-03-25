@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import logo from '../assets/images/portal-logo.png'
+import logo from '../../assets/images/portal-logo.png'
 
 export default function LoginPage(){
     const [values, setValues] = useState({ sid: '', password: '' })

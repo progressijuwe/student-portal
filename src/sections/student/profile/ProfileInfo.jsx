@@ -1,4 +1,4 @@
-import Person from '../../assets/svg/person.svg?react'
+import Person from '../../../assets/svg/person.svg?react'
 
 const details = [
     { label: "full name", text: "Stephanie Zikora Obi"},

@@ -1,7 +1,7 @@
 // sections/dashboard/ClassCalendar.jsx
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import '../../styles/calendar.css'
+import '../../../styles/calendar.css'
 
 // ── replace with API data ──
 const semesterStart = '2026-03-03'

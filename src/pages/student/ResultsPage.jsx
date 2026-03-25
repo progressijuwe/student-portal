@@ -1,7 +1,7 @@
-import PageHeading from "../components/ui/PageHeading";
-import AcademicSession from "../sections/results/AcademicSession";
-import ResultsButtons from "../sections/results/ResultsButtons";
-import ResultsTable from "../sections/results/ResultsTable";
+import PageHeading from "../../components/ui/PageHeading";
+import AcademicSession from "../../sections/student/results/AcademicSession";
+import ResultsButtons from "../../sections/student/results/ResultsButtons";
+import ResultsTable from "../../sections/student/results/ResultsTable";
 
 export default function ResultsPage(){
 

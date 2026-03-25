@@ -1,7 +1,7 @@
-import PageHeading from "../components/ui/PageHeading";
-import ProfileCard from "../sections/profile/ProfileCard";
-import ProfileDownloads from "../sections/profile/ProfileDownloads";
-import ProfileInfo from "../sections/profile/ProfileInfo";
+import PageHeading from "../../components/ui/PageHeading";
+import ProfileCard from "../../sections/student/profile/ProfileCard";
+import ProfileDownloads from "../../sections/student/profile/ProfileDownloads";
+import ProfileInfo from "../../sections/student/profile/ProfileInfo";
 
 
 export default function ProfilePage(){

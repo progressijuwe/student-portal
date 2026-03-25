@@ -1,5 +1,5 @@
-import Download from '../../assets/svg/download-icon.svg?react'
-import Transcript from '../../assets/svg/transcript-icon.svg?react'
+import Download from '../../../assets/svg/download-icon.svg?react'
+import Transcript from '../../../assets/svg/transcript-icon.svg?react'
 
 export default function ResultsButtons({ className }){
 

@@ -1,7 +1,7 @@
-import ClassCalendar from "../sections/dashboard/ClassCalendar";
-import Enrolled from "../sections/dashboard/Enrolled";
-import GpaChart from "../sections/dashboard/GpaChart";
-import StatCards from "../sections/dashboard/StatCards";
+import ClassCalendar from "../../sections/student/dashboard/ClassCalendar";
+import Enrolled from "../../sections/student/dashboard/Enrolled";
+import GpaChart from "../../sections/student/dashboard/GpaChart";
+import StatCards from "../../sections/student/dashboard/StatCards";
 
 
 export default function DashboardPage() {

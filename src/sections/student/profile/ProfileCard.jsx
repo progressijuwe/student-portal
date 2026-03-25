@@ -1,7 +1,7 @@
-import Camera from '../../assets/svg/camera.svg?react'
-import Edit from '../../assets/svg/edit.svg?react'
-import Save from '../../assets/svg/save.svg?react'
-import ProfilePhoto from '../../assets/images/profile.jpg'
+import Camera from '../../../assets/svg/camera.svg?react'
+import Edit from '../../../assets/svg/edit.svg?react'
+import Save from '../../../assets/svg/save.svg?react'
+import ProfilePhoto from '../../../assets/images/profile.jpg'
 
 export default function ProfileCard(){
 
