@@ -1,6 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @import "tailwindcss";
 
+@theme {
+  --font-body: 'Inter', sans-serif;
 
-:root {
-  --color-brand: #0f172a;
+  --color-brand: #FFE9DB;
+  --color-brand-border: #F54900;
+  --color-brand-red: #940002;
+  --color-border: #D7D7D7;
+
+  --color-badge: #BFDFC8;
+  --color-badge-border: #005015;
+
+  --color-label: #616161;
+  --color-dark: #1B1B1B;
+
+  --color-brand-orange: #FE6201;
+
+  --color-body: #4B4B4B;
+}
+@layer base{
+  input, select{
+    outline: none;
+    border: none;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+  }
 }

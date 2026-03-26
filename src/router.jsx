@@ -1,15 +1,41 @@
 import { createBrowserRouter } from 'react-router-dom'
-import MainLayout from './layouts/MainLayout'
-import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
+import DashboardPage from './pages/student/DashboardPage'
+import StudentLoginPage from './pages/student/LoginPage'
+import LecturerLoginPage from './pages/lecturer/LoginPage'
+import ProfilePage from './pages/student/ProfilePage'
+import ResultsPage from './pages/student/ResultsPage'
+import TimetablePage from './pages/student/TimetablePage'
+import StudentLayout from './layouts/StudentLayout'
+import LecturerLayout from './layouts/LecturerLayout'
+import LecturerDashboardPage from './pages/lecturer/LecturerDashboardPage'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <MainLayout />,
+    element: <StudentLoginPage />
+  },
+  {
+    path: '/lecturer/login',
+    element: <LecturerLoginPage />
+  },
+  {
+    path: '/student',
+    element: <StudentLayout />,
     children: [
-      { index: true,    element: <HomePage /> },
-      { path: 'about',  element: <AboutPage /> },
+      { path: 'dashboard',    element: <DashboardPage /> },
+      { path: 'profile',    element: <ProfilePage /> },
+      { path: 'results',    element: <ResultsPage /> },
+      { path: 'timetable',    element: <TimetablePage /> },
+    ],
+  },
+  {
+    path: '/lecturer',
+    element: <LecturerLayout />,
+    children: [
+      { path: 'dashboard',    element: <LecturerDashboardPage /> },
+      { path: 'course-details',    element: <ProfilePage /> },
+      { path: 'results-management',    element: <ResultsPage /> },
+      { path: 'profile',    element: <TimetablePage /> },
     ],
   },
 ])
