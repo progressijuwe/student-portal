@@ -2,7 +2,7 @@ import { useState } from 'react'
 import logo from '../../assets/images/portal-logo.png'
 
 export default function LoginPage(){
-    const [values, setValues] = useState({ sid: '', password: '' })
+    const [values, setValues] = useState({ email: '', password: '' })
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
 
@@ -20,13 +20,14 @@ export default function LoginPage(){
             // localStorage.setItem('token', res.data.token)
             navigate('/')
         } catch (err) {
-            setError('Invalid ID or password.')
+            setError('Invalid email or password.')
         } finally {
             setLoading(false)
         }
     }
+
     return(
-        <div className='flex flex-col items-center max-w-80 px-5 py-12 m-auto font-body gap-11'>
+        <div className='flex flex-col items-center max-w-100 px-5 py-12 m-auto font-body gap-11'>
             <div className='flex flex-col gap-8 items-center'>
                 <img 
                     src={logo} 
@@ -44,10 +45,10 @@ export default function LoginPage(){
                 <div className='flex flex-col gap-3'>
                     <div className='flex flex-col gap-7'>
                         <input 
-                            type='text'
-                            name='sid'
-                            placeholder='Student ID'
-                            value={values.sid}
+                            type='email'
+                            name='email'
+                            placeholder='School Email'
+                            value={values.email}
                             onChange={handleChange}
                             className='text-sm placeholder:text-[#808080] bg-brand border-brand focus:border-brand-border rounded-sm px-6 py-3'
                         />
