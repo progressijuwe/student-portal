@@ -21,21 +21,28 @@ const testUsers = [
   },
 ]
 
-export function Header({ role = "Student" }) {
+export function Header({ role = "Student", onMenuClick }) {
   const currentUser = testUsers.find(u => u.role === role)
   const isStudent = role === "Student"
 
   return (
     <header className="border-b border-border px-6 py-4 flex gap-11 items-center justify-between md:justify-end">
-      <Hamburger className='md:hidden' />
+      
+      {/* Hamburger */}
+      <button onClick={onMenuClick} className="md:hidden">
+        <Hamburger />
+      </button>
+
       <img src={Logo} alt='Portal Logo' className='w-10.5 h-10.5 object-cover md:hidden' />
 
+      {/* USER */}
       <div className='flex gap-2 items-center'>
         <img
           src={currentUser.profilePicture}
           alt='Profile Photo'
           className='w-7.5 h-7.5 object-cover rounded-full border border-brand-border'
         />
+
         <div className='hidden md:flex flex-col text-black'>
           <p className='font-semibold text-xs'>{currentUser.name}</p>
           <p className='text-xs'>
@@ -47,6 +54,7 @@ export function Header({ role = "Student" }) {
         </div>
       </div>
 
+      {/* ACTIONS */}
       <div className='items-center gap-6 hidden md:flex'>
         <button type='button'><Settings /></button>
         <button type='button'><Notifs className='w-6 h-6 fill-brand-red' /></button>
