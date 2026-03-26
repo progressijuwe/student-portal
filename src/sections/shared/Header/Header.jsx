@@ -28,14 +28,12 @@ export function Header({ role = "Student", onMenuClick }) {
   return (
     <header className="border-b border-border px-6 py-4 flex gap-11 items-center justify-between md:justify-end">
       
-      {/* Hamburger */}
       <button onClick={onMenuClick} className="md:hidden">
         <Hamburger />
       </button>
 
       <img src={Logo} alt='Portal Logo' className='w-10.5 h-10.5 object-cover md:hidden' />
 
-      {/* USER */}
       <div className='flex gap-2 items-center'>
         <img
           src={currentUser.profilePicture}
