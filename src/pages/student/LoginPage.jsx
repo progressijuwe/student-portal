@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from "react-router-dom";
 import logo from '../../assets/images/portal-logo.png'
 
 export default function LoginPage(){
     const [values, setValues] = useState({ sid: '', password: '' })
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setValues(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -18,7 +20,7 @@ export default function LoginPage(){
         try {
             // const res = await api.post('/api/login', values)
             // localStorage.setItem('token', res.data.token)
-            navigate('/')
+            navigate('/student/dashboard')
         } catch (err) {
             setError('Invalid ID or password.')
         } finally {

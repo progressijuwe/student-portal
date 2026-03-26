@@ -1,10 +1,18 @@
 import { NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import logo from '../../../assets/images/portal-logo.png'
 import Logout from '../../../assets/svg/logout.svg?react'
 import { studentLinks, lecturerLinks } from './sidebarLinks'
 
 export default function Sidebar({ role = "Student" }){
     const links = role === "Lecturer" ? lecturerLinks : studentLinks
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+
+        // Redirect to login
+        navigate("/", { replace: true });
+    };
 
     return(
         <aside className='flex-col gap-32 max-w-60 border-r border-border px-5 w-full shrink-0 font-body sticky top-0 h-screen hidden md:flex'>
@@ -34,7 +42,7 @@ export default function Sidebar({ role = "Student" }){
                     ))}
                 </nav>
             </div>
-            <button type='button' className='px-3 text-sm text-left font-medium text-brand-red cursor-pointer flex gap-1 items-center'>
+            <button type='button' onClick={handleLogout} className='px-3 text-sm text-left font-medium text-brand-red cursor-pointer flex gap-1 items-center'>
                 <Logout />Log out
             </button>
         </aside>
