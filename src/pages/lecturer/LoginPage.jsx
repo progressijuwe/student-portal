@@ -18,7 +18,7 @@ export default function LoginPage(){
         try {
             // const res = await api.post('/api/login', values)
             // localStorage.setItem('token', res.data.token)
-            navigate('/')
+            navigate('/lecturer/dashboard')
         } catch (err) {
             setError('Invalid email or password.')
         } finally {
