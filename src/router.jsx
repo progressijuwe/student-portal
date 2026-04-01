@@ -8,6 +8,7 @@ import TimetablePage from './pages/student/TimetablePage'
 import StudentLayout from './layouts/StudentLayout'
 import LecturerLayout from './layouts/LecturerLayout'
 import LecturerDashboardPage from './pages/lecturer/LecturerDashboardPage'
+import LecturerCoursesPage from './pages/lecturer/LecturerCoursesPage'
 
 export const router = createBrowserRouter([
   {
@@ -33,7 +34,7 @@ export const router = createBrowserRouter([
     element: <LecturerLayout />,
     children: [
       { path: 'dashboard',    element: <LecturerDashboardPage /> },
-      { path: 'course-details',    element: <ProfilePage /> },
+      { path: 'course-details',    element: <LecturerCoursesPage /> },
       { path: 'results-management',    element: <ResultsPage /> },
       { path: 'profile',    element: <TimetablePage /> },
     ],
