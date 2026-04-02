@@ -2,6 +2,7 @@ import Camera from '../../../assets/svg/camera.svg?react'
 import Edit from '../../../assets/svg/edit.svg?react'
 import Save from '../../../assets/svg/save.svg?react'
 import ProfilePhoto from '../../../assets/images/profile.jpg'
+import { Button } from '../../../components/ui/Button'
 
 export default function ProfileCard(){
 
@@ -28,14 +29,14 @@ export default function ProfileCard(){
                 </div>
             </div>
             <div className='flex gap-5 items-center text-xs lg:text-sm'>
-                <button type='button' className='py-1.25 lg:py-2.5 px-2.5 lg:px-3.75 flex items-center gap-1.25 border border-brand-red text-brand-red rounded-[5px]'>
+                <Button>
                     <Edit />
                     Edit Profile
-                </button>
-                <button type='button' className='py-1.25 lg:py-2.5 px-2.5 lg:px-3.75 flex items-center gap-1.25 border border-brand-red bg-brand-red text-white rounded-[5px]'>
+                </Button>
+                <Button>
                     <Save />
                     Save Profile
-                </button>
+                </Button>
             </div>
         </div>
     )

@@ -1,5 +1,6 @@
 import laptop from '../../../assets/images/laptop.png'
 import bars from '../../../assets/images/bars.png'
+import { Button } from '../../../components/ui/Button'
 
 const courses = [
     {
@@ -26,7 +27,7 @@ export default function Enrolled(){
                         <div className='w-full flex justify-between border border-brand-border bg-brand px-4 py-3 rounded-[20px]' key={course.courseName}>
                             <div className='flex flex-col gap-2 justify-between items-start'>
                                 <h4 className='text-sm font-medium'>{course.courseName}</h4>
-                                <button type='button' className='px-2.5 py-1.25 bg-brand-red rounded-[10px] text-white text-xs'>View grade</button>
+                                <Button>View Grade</Button>
                             </div>
                             <img src={course.image} alt='Course Image' />
                         </div>
