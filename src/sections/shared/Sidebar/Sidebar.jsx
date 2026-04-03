@@ -30,7 +30,7 @@ export default function Sidebar({
       <aside
         className={`
           fixed md:static top-0 left-0 z-50
-          h-screen w-64 bg-white
+          h-screen max-w-60 w-full bg-white
           flex flex-col justify-between
           border-r border-border px-5 py-6
 
