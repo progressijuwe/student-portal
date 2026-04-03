@@ -16,3 +16,13 @@ export const gradeScale = [
     { grade: 'D',  min: 48, max: 52  },
     { grade: 'F',  min: 0,  max: 47  },
 ]
+
+export const gradeColor = (grade) => {
+    if (grade.startsWith('A')) return 'bg-[#DCFCE7] text-[#016630]'
+    if (grade.startsWith('B')) return 'bg-[#D9E9FF] text-[#002C7D]'
+    if (grade.startsWith('C')) return 'bg-[#FFF600] text-[#A65F00]'
+    if (grade.startsWith('D')) return 'bg-[#FFCAFE] text-[#A600A3]'
+    if (grade.startsWith('E')) return 'bg-[#FFE7D9] text-[#FE6201]'
+    if (grade.startsWith('F')) return 'bg-[#FFE2E2] text-[#CC1100]'
+    return 'bg-red-100 text-red-700'
+}

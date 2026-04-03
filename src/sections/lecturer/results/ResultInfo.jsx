@@ -2,6 +2,7 @@ import Results from '../../../assets/svg/results.svg?react'
 import Letter from '../../../assets/svg/letter.svg?react'
 import Approved from '../../../assets/svg/approved.svg?react'
 import GradingInfo from './GradingInfo'
+import ResultTable from './ResultTable'
 
 
 export default function ResultInfo({ code, title, submittedCount, approvedCount }){
@@ -17,7 +18,7 @@ export default function ResultInfo({ code, title, submittedCount, approvedCount 
     ]
 
     return(
-        <section className="p-3 lg:p-4 rounded-[10px] bg-white drop-shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1)]" aria-label='Result Information'>
+        <section className="p-3 lg:p-4 rounded-[10px] bg-white shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1)]" aria-label='Result Information'>
             <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-7">
                     <div className="flex gap-3 items-center">
