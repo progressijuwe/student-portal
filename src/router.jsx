@@ -10,6 +10,8 @@ import LecturerLayout from './layouts/LecturerLayout'
 import LecturerDashboardPage from './pages/lecturer/LecturerDashboardPage'
 import LecturerCoursesPage from './pages/lecturer/LecturerCoursesPage'
 import LecturerResultsPage from './pages/lecturer/LecturerResultsPage'
+import AdminLayout from './layouts/AdminLayout'
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 
 export const router = createBrowserRouter([
   {
@@ -40,4 +42,11 @@ export const router = createBrowserRouter([
       { path: 'profile',    element: <ProfilePage /> },
     ],
   },
+  {
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
+      { path: 'dashboard', element: <AdminDashboardPage />}
+    ]
+  }
 ])

@@ -16,3 +16,12 @@ export const lecturerLinks = [
   { path: '/lecturer/results-management', text: 'Results Management', Icon: ResultsIcon },
   { path: '/lecturer/profile',            text: 'Profile',            Icon: ProfileIcon },
 ]
+
+export const adminLinks = [
+  { path: '/admin/dashboard',             text: 'Dashboard',            Icon: DashboardIcon },
+  { path: '/admin/students',              text: 'Students',             Icon: CourseIcon },
+  { path: '/admin/lecturers',             text: 'Lecturers',            Icon: ResultsIcon },
+  { path: '/admin/courses',               text: 'Courses',              Icon: ProfileIcon },
+  { path: '/admin/courses-registrations', text: 'Course registrations', Icon: ProfileIcon },
+  { path: '/admin/results',               text: 'Results',              Icon: ProfileIcon },
+]
