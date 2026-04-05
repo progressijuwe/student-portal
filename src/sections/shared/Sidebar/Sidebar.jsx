@@ -58,7 +58,7 @@ export default function Sidebar({
         aria-label="Sidebar navigation"
         aria-hidden={!isOpen}
         className={`
-          fixed md:static top-0 left-0 z-50
+          fixed lg:static top-0 left-0 z-50
           h-screen max-w-60 w-full bg-white
           flex flex-col justify-between
           border-r border-border px-5 py-6
@@ -66,7 +66,7 @@ export default function Sidebar({
           transform transition-transform duration-300 ease-in-out
 
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0
+          lg:translate-x-0
         `}
       >
         {/* Top */}
