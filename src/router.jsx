@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import DashboardPage from './pages/student/DashboardPage'
 import StudentLoginPage from './pages/student/LoginPage'
 import LecturerLoginPage from './pages/lecturer/LoginPage'
-import ProfilePage from './pages/student/ProfilePage'
+import ProfilePage from './pages/shared/ProfilePage'
 import ResultsPage from './pages/student/ResultsPage'
 import TimetablePage from './pages/student/TimetablePage'
 import StudentLayout from './layouts/StudentLayout'
@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
       { path: 'dashboard',    element: <LecturerDashboardPage /> },
       { path: 'course-details',    element: <LecturerCoursesPage /> },
       { path: 'results-management',    element: <LecturerResultsPage /> },
-      { path: 'profile',    element: <TimetablePage /> },
+      { path: 'profile',    element: <ProfilePage /> },
     ],
   },
 ])

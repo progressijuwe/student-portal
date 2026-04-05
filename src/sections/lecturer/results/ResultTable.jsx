@@ -54,7 +54,8 @@ export default function ResultTable({ data, setData }) {
     }
 
     const getGrade = (total) => {
-        if (total >= 70) return "A"
+        if (total >= 95) return "A"
+        if (total >= 85) return "A-"
         if (total >= 60) return "B"
         if (total >= 50) return "C"
         if (total >= 45) return "D"

@@ -25,7 +25,7 @@ export default function ProfileDownloads(){
                                 <p className='text-sm font-semibold text-black'>{record.label}</p>
                                 <span className='flex gap-1 text-xs text-label font-medium'>
                                     <p className='uppercase'>{record.docType} |</p>
-                                    <p>{record.lastUpdated || record.semester}</p>
+                                    <p>{record.lastUpdated ?? record.semester}</p>
                                 </span>
                             </div>
                         </div>
