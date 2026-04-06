@@ -6,7 +6,7 @@ export const assessmentComponents = [
 
 export const gradeScale = [
     { grade: 'A',  min: 95, max: 100 },
-    { grade: 'A-', min: 89, max: 90  },
+    { grade: 'A-', min: 89, max: 94  },
     { grade: 'B+', min: 83, max: 88  },
     { grade: 'B',  min: 77, max: 82  },
     { grade: 'B-', min: 71, max: 76  },
