@@ -20,7 +20,6 @@ export default function AdminLayout() {
     return (
         <div className="flex md:h-screen md:overflow-hidden w-full">
             <Sidebar 
-                role={user?.role}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
             />

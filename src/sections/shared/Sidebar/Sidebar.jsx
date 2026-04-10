@@ -6,9 +6,9 @@ import { studentLinks, lecturerLinks, adminLinks } from './sidebarLinks'
 import { useEffect, useRef } from 'react'
 
 const roleLinksMap = {
-  Student: studentLinks,
-  Lecturer: lecturerLinks,
-  Admin: adminLinks
+  student: studentLinks,
+  lecturer: lecturerLinks,
+  admin: adminLinks
 }
 
 export default function Sidebar({ 

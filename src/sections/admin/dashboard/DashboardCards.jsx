@@ -13,7 +13,7 @@ export default function DashboardCards(){
     return(
         <div className='flex shrink-0 w-full gap-5 overflow-x-auto md:overflow-visible'  style={{ scrollbarWidth: 'none'}}>
             {details.map((det) => (
-                <div className='flex justify-between bg-white rounded-[20px] border border-brand-orange p-4 w-full max-w-40.5 shrink-0 md:shrink sm:max-w-67.5'>
+                <div key={det.label} className='flex justify-between bg-white rounded-[20px] border border-brand-orange p-4 w-full max-w-40.5 shrink-0 md:shrink sm:max-w-67.5'>
                     <div className='flex flex-col gap-5'>
                         <p className='text-sm font-medium text-black'>{det.label}</p>
                         <span className='text-[40px] text-brand-red font-medium'>{det.value}</span>
