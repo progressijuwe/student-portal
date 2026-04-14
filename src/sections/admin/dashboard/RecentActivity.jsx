@@ -87,7 +87,7 @@ function ActivityItem({ type, title, meta, label, time }) {
 export default function RecentActivity() {
   return (
     <section
-      className="bg-white rounded-[10px] drop-shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-5 lg:gap-8 px-6 lg:px-12 py-5 lg:py-8"
+      className="bg-white rounded-[10px] drop-shadow-[0px_1px_2px_-1px_rgba(0,0,0,0.1)] flex flex-col gap-5 lg:gap-8 px-6 lg:px-12 py-5 lg:py-8 border border-border w-full"
       aria-labelledby="recent-activity-heading"
     >
       <h2 id="recent-activity-heading" className="text-sm lg:text-base font-semibold text-black">Recent Activity</h2>

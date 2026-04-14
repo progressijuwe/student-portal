@@ -69,7 +69,6 @@ export default function Sidebar({
           lg:translate-x-0
         `}
       >
-        {/* Top */}
         <div className='flex flex-col items-center gap-8'>
           <img src={logo} alt='School Logo' className='w-17.25 h-17.25 object-cover' />
 
@@ -94,7 +93,7 @@ export default function Sidebar({
                 {({isActive}) => (
                   <>
                     {item.Icon && (
-                      <item.Icon className={`w-4 h-4 ${
+                      <item.Icon className={`size-5 ${
                         isActive 
                           ? '[&_path]:stroke-brand-orange' 
                           : '[&_path]:stroke-body'
@@ -108,7 +107,6 @@ export default function Sidebar({
           </nav>
         </div>
 
-        {/* Bottom */}
         <button 
           onClick={handleLogout}
           aria-label="Log out"

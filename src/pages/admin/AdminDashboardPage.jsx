@@ -1,4 +1,5 @@
 
+import AdminCalendar from '../../sections/admin/dashboard/AdminCalendar'
 import DashboardCards from '../../sections/admin/dashboard/DashboardCards'
 import PendingActions from '../../sections/admin/dashboard/PendingActions'
 import QuickActions from '../../sections/admin/dashboard/QuickActions'
@@ -14,14 +15,12 @@ export default function AdminDashboardPage(){
                     <DashboardCards />
                     <QuickActions />
                 </div>
-                    <PendingActions />
+                <PendingActions />
             </div>
-            <div>
-                <div className='flex flex-col gap-10'>
-                    <RecentActivity />
-                </div>
+            <div className='flex flex-col lg:flex-row gap-10 lg:gap-4'>
+                <RecentActivity />
+                <AdminCalendar />
             </div>
-            
         </div>
     )
 }
