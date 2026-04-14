@@ -43,7 +43,7 @@ export default function QuickActions(){
                         key={item.key}
                         type='button'
                         onClick={() => setActiveAction(item.key)}
-                        className='flex flex-col gap-3 lg:gap-2 items-center border border-border rounded-[20px] px-10 lg:px-5 py-5'
+                        className='flex flex-col justify-between gap-3 lg:gap-2 items-center border border-border rounded-[20px] px-10 lg:px-5 py-5'
                     >
                         <span 
                             className='relative w-fit p-3 rounded-[10px]' 
@@ -58,7 +58,7 @@ export default function QuickActions(){
                             )}
                         </span>
 
-                        <p className='font-medium text-xs lg:text-sm text-nowrap'>
+                        <p className='font-medium text-xs lg:text-sm xl:text-nowrap text-wrap'>
                             {item.label}
                         </p>
                     </button>
