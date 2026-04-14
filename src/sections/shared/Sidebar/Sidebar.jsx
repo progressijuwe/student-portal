@@ -74,7 +74,7 @@ export default function Sidebar({
           <img src={logo} alt='School Logo' className='w-17.25 h-17.25 object-cover' />
 
           <nav 
-            className='flex flex-col w-full gap-6' 
+            className='flex flex-col w-full gap-4' 
             aria-label={`${role} navigation`}
           >
             {links.map(item => (
@@ -84,7 +84,7 @@ export default function Sidebar({
                 onClick={onClose}
                 aria-label={item.text}
                 className={({isActive}) =>
-                  `flex gap-2 items-center w-full rounded-lg p-3 text-sm ${
+                  `flex gap-2 items-center w-full rounded-lg px-4 py-2 text-sm ${
                     isActive 
                       ? 'bg-brand font-semibold text-brand-orange' 
                       : 'font-medium text-body'

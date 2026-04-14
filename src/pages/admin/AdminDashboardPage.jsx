@@ -1,6 +1,7 @@
 
 import DashboardCards from '../../sections/admin/dashboard/DashboardCards'
 import QuickActions from '../../sections/admin/dashboard/QuickActions'
+import RecentActivity from '../../sections/admin/dashboard/RecentActivity'
 
 export default function AdminDashboardPage(){
     
@@ -10,6 +11,7 @@ export default function AdminDashboardPage(){
             <div className='w-full flex flex-col gap-5'>
                 <DashboardCards />
                 <QuickActions />
+                <RecentActivity />
             </div>
             <div>
 
