@@ -3,7 +3,7 @@ import Person from '../../../assets/svg/add-person.svg?react'
 import Plus from '../../../assets/svg/plus.svg?react'
 import Course from '../../../assets/svg/courseIcon.svg?react'
 import View from '../../../assets/svg/view.svg?react'
-import AddStudentModal from '../../../features/admin/AddStudentModal'
+import AddStudentModal from './components/AddStudentModal'
 
 export default function QuickActions(){
     const [activeAction, setActiveAction] = useState(null)
@@ -27,16 +27,15 @@ export default function QuickActions(){
         }
 
         document.addEventListener("keydown", handleEsc)
-        return () => document.removeEventListener("keydown", handleEsc)
-    }, [activeAction])
+            return () => document.removeEventListener("keydown", handleEsc)
+        }, [activeAction]
+    )
 
     return(
         <section className="flex flex-col gap-5 lg:gap-4 bg-white rounded-[20px] border border-border px-4 py-7">
-            
             <h2 className="text-sm lg:text-base font-semibold text-black">
                 Quick Actions
             </h2>
-
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-7.5 lg:gap-5">
                 {actions.map((item) => (
                     <button
@@ -57,7 +56,6 @@ export default function QuickActions(){
                                 />
                             )}
                         </span>
-
                         <p className='font-medium text-xs lg:text-sm xl:text-nowrap text-wrap'>
                             {item.label}
                         </p>

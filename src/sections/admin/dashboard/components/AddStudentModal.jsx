@@ -1,10 +1,11 @@
-import { Form } from "react-router-dom"
-import Modal from "../../components/ui/Modal"
-import Person from "../../assets/svg/person.svg?react"
-import Camera from "../../assets/svg/camera2.svg?react"
-import { Button } from '../../components/ui/Button'
+import { useState } from "react"
+import Modal from "../../../../components/ui/Modal"
+import Person from "../../../../assets/svg/person.svg?react"
+import Camera from "../../../../assets/svg/camera2.svg?react"
+import { Button } from '../../../../components/ui/Button'
+import Thumb from '../../../../assets/svg/thumb.svg?react'
 
-export default function AddStudentModal({ onClose }) {
+export default function AddStudentModal({ onClose, onSuccess }) {
 
     const formFields = [
         { label: "Full Name", type: "text", name: "name", placeholder: "Enter full name", id: "add-student-name" },
@@ -17,18 +18,31 @@ export default function AddStudentModal({ onClose }) {
         { label: "Emergency Contact Name", type: "text", name: "emergencyName", placeholder: "Enter full name", id: "add-student-emergency-name" },
         { label: "Emergency Contact Number", type: "tel", name: "emergencyPhone", placeholder: "+234 - XXX - XXXX - XXX", id: "add-student-emergency-number" },
     ]
+    const [submitting, setSubmitting] = useState(false)
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        try {
+            setSubmitting(true)
+
+            // fake API
+            await new Promise(res => setTimeout(res, 1000))
+
+            onClose()
+            onSuccess()
+
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setSubmitting(false)
+        }
+    }
 
     return (
-        <Modal onClose={onClose}>
-            
-            <div className="px-4 border-b border-border pb-3 w-full">
-                <h2 className="text-label text-[24px] lg:text-[30px] font-semibold">
-                    Fill in student details
-                </h2>
-            </div>
-
-            <Form 
-                method="post"
+        <Modal heading="Fill in Student Details" onClose={onClose}>
+            <form 
+                onSubmit={handleSubmit}
                 className="flex flex-col justify-center items-center py-4 px-4 gap-6"
             >
                 <div className="flex flex-col items-center gap-1">
@@ -46,7 +60,6 @@ export default function AddStudentModal({ onClose }) {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-5 max-w-170 w-full">
-                    
                     {formFields.map((field) => (
                         <div key={field.id} className="flex flex-col gap-2">
                             
@@ -83,25 +96,24 @@ export default function AddStudentModal({ onClose }) {
                 </div>
 
                 <div className="flex gap-4 justify-end w-full px-0 lg:px-8">
-                    
                     <Button 
                         type="button"
-                        variant="secondary"
+                        variant="tertiary"
                         onClick={onClose}
+                        disabled={submitting}
                     >
                         Cancel
                     </Button>
 
                     <Button 
                         type="submit"
+                        disabled={submitting}
                         variant='primary'
                     >
-                        Add Student
+                        {submitting ? "Adding..." : "Add Student"}
                     </Button>
-
                 </div>
-
-            </Form>
+            </form>
         </Modal>
     )
 }

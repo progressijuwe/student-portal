@@ -12,6 +12,7 @@ import LecturerCoursesPage from './pages/lecturer/LecturerCoursesPage'
 import LecturerResultsPage from './pages/lecturer/LecturerResultsPage'
 import AdminLayout from './layouts/AdminLayout'
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import AdminStudentsPage from './pages/admin/AdminStudentsPage'
 
 export const router = createBrowserRouter([
   {
@@ -46,7 +47,8 @@ export const router = createBrowserRouter([
     path: '/admin',
     element: <AdminLayout />,
     children: [
-      { path: 'dashboard', element: <AdminDashboardPage />}
+      { path: 'dashboard', element: <AdminDashboardPage />},
+      { path: 'students', element: <AdminStudentsPage />},
     ]
   }
 ])
