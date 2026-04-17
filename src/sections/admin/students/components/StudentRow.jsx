@@ -4,7 +4,7 @@ import Trash from "../../../../assets/svg/trash.svg?react"
 import EmailIcon from '../../../../assets/svg/email.svg?react'
 import PhoneIcon from '../../../../assets/svg/phone.svg?react'
 
-export default function StudentRow({ student, onDeleteStudent }) {
+export default function StudentRow({ student, onView, onEdit, onDelete }) {
     return (
         <tr className="border-t border-border text-sm">
             <td className="py-4 px-2 font-semibold">{student.id}</td>
@@ -17,12 +17,12 @@ export default function StudentRow({ student, onDeleteStudent }) {
             </td>
             <td className="py-4 px-2 font-medium">{student.department}</td>
             <td className="py-4 px-2 font-medium">{student.level}</td>
-            <td className="py-4 px-2 font-medium">{student.date}</td>
+            <td className="py-4 px-2 font-medium text-center">{student.enrollmentYear}</td>
             <td className="py-4 px-2">
                 <div className="flex justify-center gap-2.5">
-                    <button aria-label="View"><Eye className='size-5 [&_path]:stroke-label' /></button>
-                    <button aria-label="Edit"><Edit className='size-5' /></button>
-                    <button aria-label="Delete"  onClick={onDeleteStudent} className="text-red-500"><Trash className='size-5' /></button>
+                    <button aria-label="View" onClick={() => onView(student)}><Eye className='size-5 [&_path]:stroke-label' /></button>
+                    <button aria-label="Edit" onClick={() => onEdit(student)}><Edit className='size-5' /></button>
+                    <button aria-label="Delete" onClick={() => onDelete(student)} className="text-red-500"><Trash className='size-5' /></button>
                 </div>
             </td>
         </tr>

@@ -17,7 +17,7 @@ export default function StudentCard({
         phone,
         department,
         level,
-        date
+        enrollmentYear
     } = student
 
     return (
@@ -48,32 +48,30 @@ export default function StudentCard({
                 </DetailItem>
                 <DetailItem 
                     icon={CalendarIcon} 
-                    label="Date Registered"
+                    label="Enrollment Year"
                     iconClass="[&_path]:fill-label"
                 >
-                    <time dateTime={formatDateISO(date)}>
-                        {date}
-                    </time>
+                    {enrollmentYear}
                 </DetailItem>
             </ul>
 
             <div className="flex gap-2">
                 <ActionButton 
-                    onClick={() => onView?.(student)}
+                    onClick={() => onView(student)}
                     label={`View ${name}`}
                 >
                     View
                 </ActionButton>
 
                 <ActionButton 
-                    onClick={() => onEdit?.(student)}
+                    onClick={() => onEdit(student)}
                     label={`Edit ${name}`}
                 >
                     Edit
                 </ActionButton>
 
                 <ActionButton 
-                    onClick={() => onDelete?.(student)}
+                    onClick={() => onDelete(student)}
                     variant="danger"
                     label={`Delete ${name}`}
                 >
@@ -122,9 +120,4 @@ function ActionButton({ children, onClick, variant = "default", label }) {
             {children}
         </button>
     )
-}
-
-function formatDateISO(date) {
-    const [day, month, year] = date.split("/")
-    return `${year}-${month}-${day}`
 }

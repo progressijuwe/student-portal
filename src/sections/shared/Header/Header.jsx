@@ -4,6 +4,8 @@ import Notifs from '../../../assets/svg/notification-bell.svg?react'
 import Hamburger from '../../../assets/svg/hamburger.svg?react'
 import Logo from '../../../assets/images/portal-logo.png'
 import { Roles } from '../../../constants/roles'
+import { getInitials } from '../../../utils/getInitials'
+import Avatar from '../../../components/ui/Avatar'
 
 export function Header({ onMenuClick }) {
 
@@ -24,15 +26,6 @@ export function Header({ onMenuClick }) {
   const isAdmin = role === Roles.ADMIN
 
   const displayName = isAdmin ? "Admin User" : user?.name
-
-  const getInitials = (name = "") => {
-    return name
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
-  }
 
   const initials = getInitials(displayName)
 
@@ -57,17 +50,11 @@ export function Header({ onMenuClick }) {
 
       <div className='flex gap-2 items-center'>
 
-        {profileImage ? (
-          <img
-            src={profileImage}
-            alt={`${displayName}'s profile`}
-            className='w-7.5 h-7.5 object-cover rounded-full border border-brand-border'
-          />
-        ) : (
-          <span className="text-[10px] font-extrabold text-white flex items-center justify-center rounded-full bg-brand-red border border-brand-orange p-1">
-            {initials}
-          </span>
-        )}
+        <Avatar 
+          alt="Admin User Profile"
+          name="Admin User"
+          size='sm'
+        />
 
         <div className='hidden md:flex flex-col text-black'>
 

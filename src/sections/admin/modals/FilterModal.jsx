@@ -1,13 +1,13 @@
 import { useState } from "react"
-import Modal from "../../../../components/ui/Modal"
-import { Button } from "../../../../components/ui/Button"
+import Modal from "../../../components/ui/Modal"
+import { Button } from "../../../components/ui/Button"
 
 export default function FilterModal({ onClose, onApply, initialFilters = {} }) {
     const [filters, setFilters] = useState({
         faculty: initialFilters.faculty || "",
         department: initialFilters.department || "",
         level: initialFilters.level || "",
-        date: initialFilters.date || "",
+        enrollmentYear: initialFilters.enrollmentYear || "",
     })
 
     const handleChange = (field, value) => {
@@ -18,7 +18,12 @@ export default function FilterModal({ onClose, onApply, initialFilters = {} }) {
     }
 
     const handleReset = () => {
-        const empty = { faculty: "", department: "", level: "", date: "" }
+        const empty = {
+            faculty: "",
+            department: "",
+            level: "",
+            enrollmentYear: ""
+        }
         setFilters(empty)
         onApply(empty)
         onClose()
@@ -29,7 +34,17 @@ export default function FilterModal({ onClose, onApply, initialFilters = {} }) {
         onClose()
     }
 
-    const isEmpty = !filters.faculty && !filters.department && !filters.level && !filters.date
+    const isEmpty = !filters.faculty && !filters.department && !filters.level && !filters.enrollmentYear
+
+    const currentYear = new Date().getFullYear()
+
+    const enrollmentYearOptions = [
+        { label: "All years", value: "" },
+        ...Array.from({ length: 5 }, (_, i) => {
+            const year = currentYear - i
+            return { label: String(year), value: String(year) }
+        })
+    ]
 
     return (
         <Modal heading="Filter Students" onClose={onClose}>
@@ -75,15 +90,11 @@ export default function FilterModal({ onClose, onApply, initialFilters = {} }) {
                     />
 
                     <Field
-                        label="Date"
-                        id="filter-date"
-                        value={filters.date}
-                        onChange={(val) => handleChange("date", val)}
-                        options={[
-                            { label: "All dates", value: "" },
-                            { label: "Last 7 days", value: "7" },
-                            { label: "Last 30 days", value: "30" }
-                        ]}
+                        label="Enrollment Year"
+                        id="filter-enrollment-year"
+                        value={filters.enrollmentYear}
+                        onChange={(val) => handleChange("enrollmentYear", val)}
+                        options={enrollmentYearOptions}
                     />
                 </div>
                 <div className="flex flex-col lg:flex-row justify-between gap-4 pt-2">

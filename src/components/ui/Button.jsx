@@ -5,6 +5,7 @@ export function Button({ children, variant = 'primary', type='button', ...props 
       primary:   'bg-brand-red border-brand-red text-white',
       secondary: 'bg-transparent border-brand-red text-[#940002]',
       tertiary:  'bg-transparent border-label text-label',
+      edit:      'bg-label border-label text-white',
       delete:    'bg-[#FF0000] border-[#FF0000] text-white'
     }
 

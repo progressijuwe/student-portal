@@ -4,7 +4,7 @@ import EmptyState from "../../../components/ui/EmptyState"
 import StudentTableSkeleton from "./components/StudentTableSkeleton"
 import ErrorState from '../../../components/ui/ErrorState'
 
-export default function StudentTable({ students = [], loading = false, error = null, onRetry, onDeleteStudent }) {
+export default function StudentTable({ students = [], loading = false, error = null, onRetry, onView, onDelete, onEdit }) {
 
     if (loading) {
         return <StudentTableSkeleton />
@@ -47,23 +47,34 @@ export default function StudentTable({ students = [], loading = false, error = n
                             <th scope="col" className="py-3 px-2 font-medium">Contact</th>
                             <th scope="col" className="py-3 px-2 font-medium">Department</th>
                             <th scope="col" className="py-3 px-2 font-medium">Level</th>
-                            <th scope="col" className="py-3 px-2 font-medium text-nowrap">Date Registered</th>
+                            <th scope="col" className="py-3 px-2 font-medium text-nowrap">Enrollment Year</th>
                             <th scope="col" className="py-3 px-2 font-medium text-center">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {students.map((student) => (
-                            <StudentRow key={student.id} student={student} onDeleteStudent={onDeleteStudent} />
+                            <StudentRow 
+                                key={student.id}
+                                student={student} 
+                                onView={onView}
+                                onDelete={onDelete} 
+                                onEdit={onEdit} 
+                            />
                         ))}
                     </tbody>
-
                 </table>
             </div>
 
             <div className="flex flex-col gap-4 px-6 lg:hidden">
                 {students.map((student) => (
-                    <StudentCard key={student.id} student={student} />
+                    <StudentCard 
+                        key={student.id} 
+                        student={student} 
+                        onView={onView}
+                        onDelete={onDelete} 
+                        onEdit={onEdit}
+                    />
                 ))}
             </div>
         </section>

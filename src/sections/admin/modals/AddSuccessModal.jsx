@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
-import Modal from "../../../../components/ui/Modal"
-import Thumb from '../../../../assets/svg/thumb.svg?react'
+import Modal from "../../../components/ui/Modal"
+import Thumb from '../../../assets/svg/thumb.svg?react'
 
 export default function AddSuccessModal({ onClose, text }) {
 

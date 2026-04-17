@@ -18,6 +18,9 @@
 
   --color-brand-orange: #FE6201;
 
+  --color-brand-blue: #F1F5FF;
+  --color-brand-blue-border: #1447E6; 
+
   --color-body: #4B4B4B;
 }
 @layer base{

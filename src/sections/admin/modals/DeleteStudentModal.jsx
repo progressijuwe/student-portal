@@ -1,8 +1,8 @@
 import { defs } from "framer-motion/client";
 import { useState } from "react";
-import Modal from "../../../../components/ui/Modal";
-import Warning from '../../../../assets/svg/warningIcon.svg?react'
-import { Button } from "../../../../components/ui/Button";
+import Modal from "../../../components/ui/Modal";
+import Warning from '../../../assets/svg/warningIcon.svg?react'
+import { Button } from "../../../components/ui/Button";
 
 export default function DeleteStudentModal({ onClose, onSuccess }){
     const [submitting, setSubmitting] = useState(false)
