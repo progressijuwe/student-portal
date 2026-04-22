@@ -15,7 +15,7 @@ export default function GradingInfo(){
                 <p className='text-xs lg:text-sm text-[#193CB8]'>
                     Grade Scale: {gradeScale.map(g => `${g.grade}: ${g.min}-${g.max}`).join(' | ')}
                 </p>
-                <p className='text-[10px] lg:text-xs text-[#1447E6]'>
+                <p className='text-[10px] lg:text-xs text-brand-blue-border'>
                     Note: Submitted results cannot be edited. Draft results can be modified anytime.
                 </p>
             </div>

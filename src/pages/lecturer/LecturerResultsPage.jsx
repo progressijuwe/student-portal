@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import StudentSearch from "../../sections/lecturer/results/StudentSearch"
 import { useMemo } from "react"
+import EmptyState from "../../components/ui/EmptyState"
 
 
 const courses = [
@@ -57,11 +58,10 @@ export default function LecturerResultsPage(){
 
     if (!courses.length) {
         return (
-            <div className="flex items-center justify-center h-full py-20">
-                <p className="text-gray-500 text-sm md:text-base">
-                    No Courses Assigned to Check Results
-                </p>
-            </div>
+            <EmptyState
+                title="No Results found"
+                description="Results will appear here once courses are available."
+            />
         )
     }
     return(

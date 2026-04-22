@@ -1,3 +1,4 @@
+import EmptyState from "../../components/ui/EmptyState";
 import CoursePane from "../../sections/lecturer/courses/CoursePane";
 import CourseSelect from "../../sections/lecturer/courses/CourseSelect";
 import CourseStudents from "../../sections/lecturer/courses/CourseStudents";
@@ -14,11 +15,10 @@ export default function LecturerCoursesPage(){
     
     if (!courses.length) {
         return (
-            <div className="flex items-center justify-center h-full py-20">
-                <p className="text-gray-500 text-sm md:text-base">
-                    No Courses Assigned
-                </p>
-            </div>
+            <EmptyState 
+                title="No courses found"
+                description="Courses will appear here once assigned."
+            />
         )
     }
 

@@ -1,7 +1,7 @@
 import PageHeading from "../../components/ui/PageHeading";
 import AcademicSession from "../../sections/student/results/AcademicSession";
-import ResultsButtons from "../../sections/student/results/ResultsButtons";
 import ResultsTable from "../../sections/student/results/ResultsTable";
+import StudentResultsActions from "../../sections/student/results/StudentResultActions";
 
 export default function ResultsPage(){
 
@@ -11,10 +11,13 @@ export default function ResultsPage(){
                 <PageHeading title="Academic Results" description="Software Engineering Bsc Class of ‘26" />
                 <div className="flex items-center justify-between">
                     <AcademicSession />
-                    <ResultsButtons className="hidden lg:flex" />
+                    <StudentResultsActions className="hidden lg:flex" />
                 </div>
             </div>
-            <ResultsTable />
+            <div className="flex flex-col gap-5">
+                <ResultsTable />
+                <StudentResultsActions className="lg:hidden" />
+            </div>
         </div>
     )
 }
