@@ -1,7 +1,16 @@
 import { motion } from "framer-motion"
 import Close from '../../assets/svg/close.svg?react'
+import { useEffect } from "react"
 
 export default function Modal({ Icon, heading, children, onClose }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [onClose])
+
   return (
     <motion.div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"

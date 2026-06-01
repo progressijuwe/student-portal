@@ -202,13 +202,8 @@ export default function AdminStudentsPage() {
     }, [fetchStudents])
 
     const filteredStudents = useMemo(
-        () =>
-            filterStudents(
-                students,
-                debouncedSearch,
-                { faculty, department, level, enrollmentYear }
-            ),
-        [students, debouncedSearch, faculty, department, level, enrollmentYear]
+        () => filterStudents(students, debouncedSearch, filters),
+        [students, debouncedSearch, filters]
     )
 
     const totalPages = useMemo(
