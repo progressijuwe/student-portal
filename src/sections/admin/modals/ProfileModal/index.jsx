@@ -3,19 +3,28 @@ import ProfileHeader from "./ProfileHeader"
 import ProfileInfoGrid from "./ProfileInfoGrid"
 import ProfileStats from "./ProfileStats"
 import ProfileResults from "./ProfileResults"
+import ProfileAssignedCourses from "./ProfileAssignedCourses"
 import ProfileActions from "./ProfileActions"
 
-export default function ProfileModal({ student, onClose }) {
+export default function ProfileModal({ user, userType, heading, onClose, onEdit, onDelete }) {
+    const isLecturer = userType === "lecturer"
+
     return (
-        <Modal heading="Student Profile" onClose={onClose}>
+        <Modal heading={heading} onClose={onClose}>
             <div className="flex flex-col gap-6">
-                <ProfileHeader student={student} />
-                <ProfileInfoGrid student={student} />
-                <ProfileStats student={student} />
-                <ProfileResults student={student} />
-                <ProfileActions 
-                    onEdit={() => onEdit(student)}
-                    onDelete={() => onDelete(student)}
+                <ProfileHeader user={user} />
+                <ProfileInfoGrid user={user} />
+                <ProfileStats user={user} />
+
+                {isLecturer ? (
+                    <ProfileAssignedCourses user={user} />
+                ) : (
+                    <ProfileResults user={user} />
+                )}
+
+                <ProfileActions
+                    onEdit={() => onEdit(user)}
+                    onDelete={() => onDelete(user)}
                 />
             </div>
         </Modal>

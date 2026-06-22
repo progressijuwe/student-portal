@@ -1,82 +1,35 @@
-import StudentRow from "./components/StudentRow"
-import StudentCard from "./components/StudentCard"
-import EmptyState from "../../../components/ui/EmptyState"
-import StudentTableSkeleton from "./components/StudentTableSkeleton"
-import ErrorState from '../../../components/ui/ErrorState'
+import DataTable from "../../../components/ui/DataTable"
+import UserRow from "../../../components/shared/UserRow"
+import UserCard from "../../../components/shared/UserCard"
+import UserTableSkeleton from "../../../components/shared/UserTableSkeleton"
 
-export default function StudentTable({ students = [], loading = false, error = null, onRetry, onView, onDelete, onEdit }) {
+const columns = [
+    { key: "id",             label: "Student ID" },
+    { key: "name",           label: "Name" },
+    { key: "contact",        label: "Contact" },
+    { key: "department",     label: "Department" },
+    { key: "level",          label: "Level" },
+    { key: "enrollmentYear", label: "Enrollment Year", className: "text-nowrap" },
+    { key: "actions",        label: "Actions", className: "text-center" },
+]
 
-    if (loading) {
-        return <StudentTableSkeleton />
-    }
-    if (error) {
-        return (
-            <ErrorState
-                title="Failed to load students"
-                description="Something went wrong while fetching students."
-                onRetry={onRetry}
-            />
-        )
-    }
-    if (!students.length) {
-        return (
-            <EmptyState
-                title="No students found"
-                description="Students will appear here once they are added."
-            />
-        )
-    }
-
+export default function StudentTable({ students, loading, error, onRetry, onView, onEdit, onDelete }) {
     return (
-        <section 
-            className="w-full"
-            aria-labelledby="students-table-heading"
-        >
-            <h2 id="students-table-heading" className="sr-only">
-                Students list
-            </h2>
-            <div className="hidden lg:block w-full overflow-x-auto">
-                <table className="w-full border border-border rounded-[10px] overflow-hidden">
-                    <caption className="sr-only">
-                        List of students with their details
-                    </caption>
-                    <thead className="bg-[#F9F9FF] text-left text-sm text-label">
-                        <tr>
-                            <th scope="col" className="py-3 px-2 font-medium">Student ID</th>
-                            <th scope="col" className="py-3 px-2 font-medium">Name</th>
-                            <th scope="col" className="py-3 px-2 font-medium">Contact</th>
-                            <th scope="col" className="py-3 px-2 font-medium">Department</th>
-                            <th scope="col" className="py-3 px-2 font-medium">Level</th>
-                            <th scope="col" className="py-3 px-2 font-medium text-nowrap">Enrollment Year</th>
-                            <th scope="col" className="py-3 px-2 font-medium text-center">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {students.map((student) => (
-                            <StudentRow 
-                                key={student.id}
-                                student={student} 
-                                onView={onView}
-                                onDelete={onDelete} 
-                                onEdit={onEdit} 
-                            />
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="flex flex-col gap-4 px-6 lg:hidden">
-                {students.map((student) => (
-                    <StudentCard 
-                        key={student.id} 
-                        student={student} 
-                        onView={onView}
-                        onDelete={onDelete} 
-                        onEdit={onEdit}
-                    />
-                ))}
-            </div>
-        </section>
+        <DataTable
+            items={students}
+            loading={loading}
+            error={error}
+            onRetry={onRetry}
+            columns={columns}
+            caption="List of students with their details"
+            headingId="students-table-heading"
+            Skeleton={() => <UserTableSkeleton cols={7} />}
+            renderRow={(student) => (
+                <UserRow key={student.id} user={student} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+            )}
+            renderCard={(student) => (
+                <UserCard key={student.id} user={student} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+            )}
+        />
     )
 }
