@@ -1,33 +1,30 @@
 import { AnimatePresence } from "framer-motion";
 import { useEntityPage } from "../../hooks/useEntityPage";
-import { useLecturerQuery } from "../../hooks/useLecturerQuery";
-import { filterLecturers } from "../../utils/filterLecturers";
-import { lecturerFilterFields } from "../../constants/filterConfig";
+import { useCourseQuery } from "../../hooks/useCourseQuery";
+import { filterCourses } from "../../utils/filterCourses";
+import { courseFilterFields } from "../../constants/filterConfig";
 import TableToolbar from "../../components/shared/TableToolbar";
-import LecturerTable from "../../sections/admin/lecturers/LecturerTable";
+import CourseGrid from "../../sections/admin/courses/CourseGrid";
 import Pagination from "../../components/ui/Pagination";
-import AddLecturerModal from "../../sections/admin/modals/AddLecturerModal";
+import AddCourseModal from "../../sections/admin/modals/AddCourseModal";
 import AddSuccessModal from "../../sections/admin/modals/AddSuccessModal";
-import FilterModal from "../../sections/admin/modals/FilterModal";
 import DeleteUserModal from "../../sections/admin/modals/DeleteUserModal";
-import UpdateLecturerModal from "../../sections/admin/modals/UpdateLecturerModal";
-import ProfileModal from "../../sections/admin/modals/ProfileModal";
+import FilterModal from "../../sections/admin/modals/FilterModal";
 import EntityPageShell from "../../components/ui/EntityPageShell";
-
-import { lecturersData } from "../../data/lecturersData";
+import { coursesData } from "../../data/courseData";
+import EditCourseModal from "../../sections/admin/modals/EditCourseModal";
 
 const MODAL = {
 	ADD: "add",
 	SUCCESS: "success",
 	FILTER: "filter",
-	VIEW: "view",
 	DELETE: "delete",
 	DELETE_SUCCESS: "delete-success",
 	EDIT: "edit",
 	EDIT_SUCCESS: "edit-success",
 };
 
-export default function AdminLecturersPage() {
+export default function AdminCoursesPage() {
 	const {
 		search,
 		filters,
@@ -44,35 +41,30 @@ export default function AdminLecturersPage() {
 		open,
 		close,
 		fetchItems,
-		handleView,
 		handleEdit,
 		handleDelete,
 		handleSuccess,
 	} = useEntityPage({
-		data: lecturersData,
-		filterFn: filterLecturers,
-		useQueryHook: useLecturerQuery,
+		data: coursesData,
+		filterFn: filterCourses,
+		useQueryHook: useCourseQuery,
 	});
 
-	const openLecturerModal = () => open(MODAL.ADD);
-	const openFilterModal = () => open(MODAL.FILTER);
-
 	return (
-		<EntityPageShell title='Lecturers'>
+		<EntityPageShell title='Courses'>
 			<TableToolbar
 				search={search}
 				onSearch={setSearch}
-				onAdd={openLecturerModal}
-				onFilter={openFilterModal}
-				addLabel='Add Lecturer'
-				searchPlaceholder='Search lecturers'
+				onAdd={() => open(MODAL.ADD)}
+				onFilter={() => open(MODAL.FILTER)}
+				addLabel='Add Course'
+				searchPlaceholder='Search courses'
 			/>
-			<LecturerTable
-				lecturers={items}
+			<CourseGrid
+				courses={items}
 				loading={loading}
 				error={error}
 				onRetry={fetchItems}
-				onView={handleView}
 				onEdit={handleEdit}
 				onDelete={handleDelete}
 			/>
@@ -80,24 +72,24 @@ export default function AdminLecturersPage() {
 				<Pagination
 					page={page}
 					total={filteredItems.length}
-					perPage={8}
+					perPage={12}
 					onPageChange={setPage}
 				/>
 			)}
 			<AnimatePresence>
 				{modal.type === MODAL.ADD && (
-					<AddLecturerModal
+					<AddCourseModal
 						onClose={close}
 						onSuccess={() => handleSuccess(MODAL.SUCCESS)}
 					/>
 				)}
 				{modal.type === MODAL.SUCCESS && (
-					<AddSuccessModal onClose={close} text='Lecturer Added Successfully' />
+					<AddSuccessModal onClose={close} text='Course Added Successfully' />
 				)}
 				{modal.type === MODAL.FILTER && (
 					<FilterModal
-						heading='Filter Lecturers'
-						fields={lecturerFilterFields}
+						heading='Filter Courses'
+						fields={courseFilterFields}
 						onClose={close}
 						onApply={setFilters}
 						initialFilters={filters}
@@ -105,41 +97,25 @@ export default function AdminLecturersPage() {
 				)}
 				{modal.type === MODAL.DELETE && (
 					<DeleteUserModal
-						lecturer={modal.data}
+						course={modal.data}
 						onClose={close}
 						onSuccess={() => handleSuccess(MODAL.DELETE_SUCCESS)}
-						heading='Delete Lecturer'
-						description='Are you sure you want to delete this lecturer? This will remove all their records, course registrations, and academic history'
+						heading='Delete Course'
+						description='Are you sure you want to delete this course? This will remove the course and unassign all enrolled students.'
 					/>
 				)}
 				{modal.type === MODAL.DELETE_SUCCESS && (
-					<AddSuccessModal
-						onClose={close}
-						text='Lecturer Deleted Successfully'
-					/>
+					<AddSuccessModal onClose={close} text='Course Deleted Successfully' />
 				)}
 				{modal.type === MODAL.EDIT && (
-					<UpdateLecturerModal
-						lecturer={modal.data}
+					<EditCourseModal
+						course={modal.data}
 						onClose={close}
 						onSuccess={() => handleSuccess(MODAL.EDIT_SUCCESS)}
 					/>
 				)}
 				{modal.type === MODAL.EDIT_SUCCESS && (
-					<AddSuccessModal
-						onClose={close}
-						text='Lecturer Updated Successfully'
-					/>
-				)}
-				{modal.type === MODAL.VIEW && (
-					<ProfileModal
-						heading='Lecturer Profile'
-						user={modal.data}
-						userType='lecturer'
-						onClose={close}
-						onEdit={handleEdit}
-						onDelete={handleDelete}
-					/>
+					<AddSuccessModal onClose={close} text='Course Updated Successfully' />
 				)}
 			</AnimatePresence>
 		</EntityPageShell>

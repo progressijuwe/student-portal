@@ -111,3 +111,40 @@ export const lecturerFilterFields = [
         options: joinYearOptions,
     },
 ]
+export const courseFilterFields = [
+    {
+        name: "semester",
+        label: "Semester",
+        options: [
+        { label: "All semesters",   value: "" },
+        { label: "First Semester",  value: "First Semester" },
+        { label: "Second Semester", value: "Second Semester" },
+        ],
+    },
+    {
+        name: "level",
+        label: "Level",
+        options: [
+        { label: "All levels", value: "" },
+        { label: "100", value: "100" },
+        { label: "200", value: "200" },
+        { label: "300", value: "300" },
+        { label: "400", value: "400" },
+        { label: "500", value: "500" },
+        ],
+    },
+    {
+        name: "department",
+        label: "Department",
+        options: [
+        { label: "All departments",        value: "" },
+        { label: "Software Engineering",   value: "Software Engineering" },
+        { label: "Computer Science",       value: "Computer Science" },
+        { label: "Mechanical Engineering", value: "Mechanical Engineering" },
+        { label: "Electrical Engineering", value: "Electrical Engineering" },
+        { label: "Civil Engineering",      value: "Civil Engineering" },
+        { label: "Business Administration",value: "Business Administration" },
+        { label: "Accounting",             value: "Accounting" },
+        ],
+    },
+]

@@ -14,6 +14,7 @@ import AdminLayout from './layouts/AdminLayout'
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import AdminStudentsPage from './pages/admin/AdminStudentsPage'
 import AdminLecturersPage from './pages/admin/AdminLecturersPage'
+import AdminCoursesPage from './pages/admin/AdminCoursesPage'
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
       { path: 'dashboard', element: <AdminDashboardPage />},
       { path: 'students',  element: <AdminStudentsPage />},
       { path: 'lecturers', element: <AdminLecturersPage />},
+      { path: 'courses', element: <AdminCoursesPage />},
     ]
   }
 ])

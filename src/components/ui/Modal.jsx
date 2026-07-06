@@ -2,7 +2,7 @@ import { motion } from "framer-motion"
 import Close from '../../assets/svg/close.svg?react'
 import { useEffect } from "react"
 
-export default function Modal({ Icon, heading, children, onClose }) {
+export default function Modal({ Icon, heading, description, children, onClose }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose()
@@ -44,16 +44,23 @@ export default function Modal({ Icon, heading, children, onClose }) {
             heading ? "justify-between border-b pb-3" : "justify-end"
           }`}
         >
-          {heading && (
-            <div className="flex gap-1 lg:gap-2 items-center">
-              {Icon && <span className="bg-[#FFEFEF] p-2 rounded-full ">{Icon}</span>}
-              <h2 
-                id={`modal-heading-${heading?.replace(/\s+/g, '-').toLowerCase()}`}
-                className="text-xl lg:text-[30px] font-semibold">
-                {heading}
-              </h2>
-            </div>
-          )}
+          <div className="flex flex-col gap-1">
+            {heading && (
+              <div className="flex gap-1 lg:gap-2 items-center">
+                {Icon && <span className="bg-[#FFEFEF] p-2 rounded-full ">{Icon}</span>}
+                <h2 
+                  id={`modal-heading-${heading?.replace(/\s+/g, '-').toLowerCase()}`}
+                  className="text-xl lg:text-[30px] font-semibold">
+                  {heading}
+                </h2>
+              </div>
+            )}
+
+            {description &&(
+              <p className="font-medium text-sm text-label leading-4.25">{description}</p>
+            )}
+          </div>
+          
 
           <button 
             onClick={onClose}
