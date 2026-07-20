@@ -1,66 +1,68 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
-import logo from "../../../assets/images/portal-logo.png";
-import Logout from "../../../assets/svg/logout.svg?react";
-import { studentLinks, lecturerLinks, adminLinks } from "./sidebarLinks";
-import { useEffect, useRef } from "react";
-import { useIsDesktop } from "../../../hooks/useIsDesktop";
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
+import logo from '../../../assets/images/portal-logo.png';
+import Logout from '../../../assets/svg/logout.svg?react';
+import { studentLinks, lecturerLinks, adminLinks } from './sidebarLinks';
+import { useEffect, useRef } from 'react';
+import { useIsDesktop } from '../../../hooks/useIsDesktop';
+import { useLogout } from '../../../hooks/useLogout';
 
 const roleLinksMap = {
-  student: studentLinks,
-  lecturer: lecturerLinks,
-  admin: adminLinks,
+	student: studentLinks,
+	lecturer: lecturerLinks,
+	admin: adminLinks,
 };
 
 export default function Sidebar({ isOpen = false, onClose }) {
-  const isDesktop = useIsDesktop();
+	const isDesktop = useIsDesktop();
 
-  // Desktop always open, mobile controlled by prop
-  const sidebarVisible = isDesktop || isOpen;
+	// Desktop always open, mobile controlled by prop
+	const sidebarVisible = isDesktop || isOpen;
 
-  const { user } = useAuth();
-  const role = user?.role || "student";
-  const links = roleLinksMap[role] || studentLinks;
+	const { user } = useAuth();
+	const role = user?.role || 'student';
+	const links = roleLinksMap[role] || studentLinks;
 
-  const navigate = useNavigate();
-  const sidebarRef = useRef(null);
+	const sidebarRef = useRef(null);
 
-  const handleLogout = () => {
-    navigate("/", { replace: true });
-  };
+	const { mutate: logoutMutate, isPending: isLoggingOut } = useLogout();
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose?.();
-    };
+	const handleLogout = () => {
+		logoutMutate();
+	};
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+	useEffect(() => {
+		const handleKeyDown = (e) => {
+			if (e.key === 'Escape') onClose?.();
+		};
 
-  useEffect(() => {
-    if (sidebarVisible && sidebarRef.current) {
-      sidebarRef.current.focus();
-    }
-  }, [sidebarVisible]);
+		document.addEventListener('keydown', handleKeyDown);
+		return () => document.removeEventListener('keydown', handleKeyDown);
+	}, [onClose]);
 
-  return (
-    <>
-      {/* Overlay (mobile only) */}
-      {!isDesktop && sidebarVisible && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
+	useEffect(() => {
+		if (sidebarVisible && sidebarRef.current) {
+			sidebarRef.current.focus();
+		}
+	}, [sidebarVisible]);
 
-      <aside
-        ref={sidebarRef}
-        tabIndex={-1}
-        aria-label="Sidebar navigation"
-        aria-hidden={!sidebarVisible}
-        className={`
+	return (
+		<>
+			{/* Overlay (mobile only) */}
+			{!isDesktop && sidebarVisible && (
+				<div
+					className='fixed inset-0 bg-black/40 z-40 md:hidden'
+					onClick={onClose}
+					aria-hidden='true'
+				/>
+			)}
+
+			<aside
+				ref={sidebarRef}
+				tabIndex={-1}
+				aria-label='Sidebar navigation'
+				aria-hidden={!sidebarVisible}
+				className={`
           fixed lg:static top-0 left-0 z-50
           h-screen max-w-60 w-full bg-white
           flex flex-col justify-between
@@ -68,64 +70,65 @@ export default function Sidebar({ isOpen = false, onClose }) {
           focus:outline-0
           transform transition-transform duration-300 ease-in-out
 
-          ${sidebarVisible ? "translate-x-0" : "-translate-x-full"}
+          ${sidebarVisible ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}
-      >
-        {/* Top */}
-        <div className="flex flex-col items-center gap-8">
-          <img
-            src={logo}
-            alt="School Logo"
-            className="w-17.25 h-17.25 object-cover"
-          />
+			>
+				{/* Top */}
+				<div className='flex flex-col items-center gap-8'>
+					<img
+						src={logo}
+						alt='School Logo'
+						className='w-17.25 h-17.25 object-cover'
+					/>
 
-          <nav
-            className="flex flex-col w-full gap-4"
-            aria-label={`${role} navigation`}
-          >
-            {links.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={onClose}
-                aria-label={item.text}
-                className={({ isActive }) =>
-                  `flex gap-2 items-center w-full rounded-lg px-4 py-2 text-sm ${
-                    isActive
-                      ? "bg-brand font-semibold text-brand-orange"
-                      : "font-medium text-body"
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {item.Icon && (
-                      <item.Icon
-                        className={`size-5 ${
-                          isActive
-                            ? "[&_path]:stroke-brand-orange"
-                            : "[&_path]:stroke-body"
-                        }`}
-                      />
-                    )}
-                    {item.text}
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
+					<nav
+						className='flex flex-col w-full gap-4'
+						aria-label={`${role} navigation`}
+					>
+						{links.map((item) => (
+							<NavLink
+								key={item.path}
+								to={item.path}
+								onClick={onClose}
+								aria-label={item.text}
+								className={({ isActive }) =>
+									`flex gap-2 items-center w-full rounded-lg px-4 py-2 text-sm ${
+										isActive
+											? 'bg-brand font-semibold text-brand-orange'
+											: 'font-medium text-body'
+									}`
+								}
+							>
+								{({ isActive }) => (
+									<>
+										{item.Icon && (
+											<item.Icon
+												className={`size-5 ${
+													isActive
+														? '[&_path]:stroke-brand-orange'
+														: '[&_path]:stroke-body'
+												}`}
+											/>
+										)}
+										{item.text}
+									</>
+								)}
+							</NavLink>
+						))}
+					</nav>
+				</div>
 
-        {/* Bottom */}
-        <button
-          onClick={handleLogout}
-          aria-label="Log out"
-          className="text-sm text-brand-red flex gap-2 items-center"
-        >
-          <Logout /> Log out
-        </button>
-      </aside>
-    </>
-  );
+				{/* Bottom */}
+				<button
+					onClick={handleLogout}
+					disabled={isLoggingOut}
+					aria-label='Log out'
+					className='text-sm text-brand-red flex gap-2 items-center'
+				>
+					<Logout /> {isLoggingOut ? 'Logging out...' : 'Log out'}
+				</button>
+			</aside>
+		</>
+	);
 }
