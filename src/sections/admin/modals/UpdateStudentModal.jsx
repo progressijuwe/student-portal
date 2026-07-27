@@ -1,10 +1,11 @@
 import Modal from "../../../components/ui/Modal"
-import UserForm from "../../../components/shared/UserForm"
+import UserForm, { studentFields } from "../../../components/shared/UserForm"
 
 export default function EditStudentModal({ student, onClose, onSuccess }) {
     return (
         <Modal heading="Edit Student Details" onClose={onClose}>
             <UserForm
+                fields={studentFields}
                 initialData={student}
                 submitLabel="Save Changes"
                 onSubmit={async (data) => {

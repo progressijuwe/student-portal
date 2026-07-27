@@ -1,40 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-body: 'Inter', sans-serif;
+	--font-body: 'Inter', sans-serif;
 
-  --color-brand: #FFE9DB;
-  --color-brand-border: #F54900;
-  --color-brand-red: #940002;
-  --color-border: #D7D7D7;
+	--color-brand: #ffe9db;
+	--color-brand-border: #f54900;
+	--color-brand-red: #940002;
+	--color-border: #d7d7d7;
 
-  --color-badge: #BFDFC8;
-  --color-badge-border: #005015;
+	--color-badge: #bfdfc8;
+	--color-badge-border: #005015;
 
-  --color-label: #616161;
-  --color-dark: #1B1B1B;
+	--color-label: #616161;
+	--color-dark: #1b1b1b;
 
-  --color-brand-orange: #FE6201;
+	--color-brand-orange: #fe6201;
 
-  --color-brand-blue: #F1F5FF;
-  --color-brand-blue-border: #1447E6; 
+	--color-brand-blue: #f1f5ff;
+	--color-brand-blue-border: #1447e6;
 
-  --color-body: #4B4B4B;
+	--color-body: #4b4b4b;
 }
-@layer base{
-  input, select{
-    outline: none;
-    border: none;
-  }
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-  }
+@layer base {
+	input,
+	select {
+		outline: none;
+		border: none;
+	}
+	input[type='date']::-webkit-calendar-picker-indicator {
+		opacity: 1;
+		display: block;
+		cursor: pointer;
+		filter: none;
+	}
+
+	input[type='date'] {
+		position: relative;
+	}
 }
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
-button{
-  cursor: pointer;
+button {
+	cursor: pointer;
 }

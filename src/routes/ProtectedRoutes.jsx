@@ -1,31 +1,24 @@
-import { Navigate, Outlet } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const ROLE_DASHBOARDS = {
+	student: '/student/dashboard',
+	lecturer: '/lecturer/dashboard',
+	admin: '/admin/dashboard',
+};
 
 export default function ProtectedRoute({ allowedRoles = [] }) {
+	const { user, loading } = useAuth();
 
-    const { user, loading } = useAuth()
+	if (loading) return <p>Loading...</p>;
 
-    if (loading) return <p>Loading...</p>
+	if (!user) {
+		return <Navigate to='/login' replace />;
+	}
 
-    // Not logged in
-    if (!user) {
-        return <Navigate to="/" replace />
-    }
+	if (!allowedRoles.includes(user.role)) {
+		return <Navigate to={ROLE_DASHBOARDS[user.role] ?? '/login'} replace />;
+	}
 
-    // Role not allowed
-    if (!allowedRoles.includes(user.role)) {
-        // Redirect based on role
-        switch(user.role) {
-            case "Student":
-                return <Navigate to="/student/dashboard" replace />
-            case "Lecturer":
-                return <Navigate to="/lecturer/dashboard" replace />
-            case "Admin":
-                return <Navigate to="/admin/dashboard" replace />
-            default:
-                return <Navigate to="/" replace />
-        }
-    }
-
-    return <Outlet />
+	return <Outlet />;
 }

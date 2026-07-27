@@ -1,20 +1,16 @@
 export function filterStudents(students, search, filters) {
-    if (!Array.isArray(students)) return []
-
-    const s = search.toLowerCase()
+    const { faculty, department, level, enrollmentYear } = filters
 
     return students.filter((student) => {
         const matchesSearch =
-            student.name.toLowerCase().includes(s) ||
-            student.email.toLowerCase().includes(s)
+        student.name.toLowerCase().includes(search.toLowerCase()) ||
+        student.email.toLowerCase().includes(search.toLowerCase())
 
-        if (!matchesSearch) return false
+        const matchesFaculty      = !faculty      || student.faculty      === faculty
+        const matchesDepartment   = !department   || student.department   === department
+        const matchesLevel        = !level        || student.level        === level
+        const matchesEnrollment   = !enrollmentYear || student.enrollmentYear === enrollmentYear
 
-        if (filters.faculty && student.faculty !== filters.faculty) return false
-        if (filters.department && student.department !== filters.department) return false
-        if (filters.level && student.level !== filters.level) return false
-        if (filters.enrollmentYear && student.enrollmentYear !== filters.enrollmentYear) return false
-
-        return true
+        return matchesSearch && matchesFaculty && matchesDepartment && matchesLevel && matchesEnrollment
     })
 }

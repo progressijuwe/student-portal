@@ -9,14 +9,14 @@ const INFO_CONFIG = {
     emergencyContact: { Icon: Phone, bg: "bg-[#F3E8FF]", iconColor: "text-[#9810FA]" },
 }
 
-export default function ProfileInfoGrid({ student }) {
+export default function ProfileInfoGrid({ user }) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4">
-            <Info {...INFO_CONFIG.email} label="Email">{student.email || "Not Provided"}</Info>
-            <Info {...INFO_CONFIG.phone} label="Phone">{student.phone || "Not Provided"}</Info>
-            <Info {...INFO_CONFIG.address} label="Address">{student.address || "No address yet"}</Info>
-            <Info {...INFO_CONFIG.emergencyContact} label="Emergency Contact">{student.emergencyPhone || "Not Provided"}</Info>
+            <Info {...INFO_CONFIG.email} label="Email">{user.email || "Not Provided"}</Info>
+            <Info {...INFO_CONFIG.phone} label="Phone">{user.phone || "Not Provided"}</Info>
+            <Info {...INFO_CONFIG.address} label="Address">{user.address || "No address yet"}</Info>
+            <Info {...INFO_CONFIG.emergencyContact} label="Emergency Contact">{user.emergencyPhone || "Not Provided"}</Info>
         </div>
     )
 }
