@@ -1,32 +1,38 @@
-import {
-	MIN_UNITS,
-	MAX_UNITS,
-} from "../../../data/courseRegistrationCoursesData";
-import SubmitIcon from "../../../assets/svg/letter.svg?react";
+import SubmitIcon from '../../../assets/svg/letter.svg?react';
 
-export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
+export default function UnitLoadSummary({
+	selected,
+	onRemove,
+	onSubmit,
+	minUnits,
+	maxUnits,
+	isSubmitting,
+}) {
 	const totalUnits = selected.reduce((sum, c) => sum + c.units, 0);
-	const remaining = MAX_UNITS - totalUnits;
-	const progress = Math.min((totalUnits / MAX_UNITS) * 100, 100);
-	const isExceeded = totalUnits > MAX_UNITS;
-	const isTooFew = totalUnits < MIN_UNITS;
-	const isValid = totalUnits >= MIN_UNITS && totalUnits <= MAX_UNITS;
+	const remaining = maxUnits - totalUnits;
+	const progress = Math.min((totalUnits / maxUnits) * 100, 100);
+	const isExceeded = totalUnits > maxUnits;
+	const isTooFew = totalUnits < minUnits;
+	const isValid = totalUnits >= minUnits && totalUnits <= maxUnits;
 
-	const statusLabel = isExceeded ? "Exceeded" : isTooFew ? "Too Few" : "Valid";
+	const statusLabel = isExceeded
+		? 'Exceeded'
+		: isTooFew
+			? 'Too Few'
+			: 'Valid';
 	const statusColor = isExceeded
-		? "bg-red-100 text-red-600"
+		? 'bg-red-100 text-red-600'
 		: isTooFew
-			? "bg-yellow-100 text-yellow-600"
-			: "bg-green-100 text-green-600";
+			? 'bg-yellow-100 text-yellow-600'
+			: 'bg-green-100 text-green-600';
 	const barColor = isExceeded
-		? "bg-red-500"
+		? 'bg-red-500'
 		: isTooFew
-			? "bg-yellow-400"
-			: "bg-green-500";
+			? 'bg-yellow-400'
+			: 'bg-green-500';
 
 	return (
 		<div className='flex flex-col gap-4'>
-			{/* Header */}
 			<div className='flex items-center justify-between'>
 				<h2 className='text-base font-semibold text-black'>
 					Unit Load Summary
@@ -38,14 +44,13 @@ export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
 				</span>
 			</div>
 
-			{/* Progress bar */}
 			<div className='flex flex-col gap-1'>
 				<div className='flex justify-between text-xs text-label'>
 					<span>Units Selected</span>
 					<span
-						className={`font-semibold ${isExceeded ? "text-red-600" : "text-black"}`}
+						className={`font-semibold ${isExceeded ? 'text-red-600' : 'text-black'}`}
 					>
-						{totalUnits}/{MAX_UNITS}
+						{totalUnits}/{maxUnits}
 					</span>
 				</div>
 				<div className='h-2 bg-gray-100 rounded-full overflow-hidden'>
@@ -55,24 +60,27 @@ export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
 					/>
 				</div>
 				<div className='flex justify-between text-xs text-label'>
-					<span>Min: {MIN_UNITS}</span>
-					<span>Max: {MAX_UNITS}</span>
+					<span>Min: {minUnits}</span>
+					<span>Max: {maxUnits}</span>
 				</div>
 			</div>
 
-			{/* Stats */}
 			<div className='grid grid-cols-3 gap-2'>
 				{[
-					{ label: "Courses", value: selected.length },
-					{ label: "Units", value: totalUnits, red: true },
-					{ label: "Remaining", value: remaining, red: remaining < 0 },
+					{ label: 'Courses', value: selected.length },
+					{ label: 'Units', value: totalUnits, red: true },
+					{
+						label: 'Remaining',
+						value: remaining,
+						red: remaining < 0,
+					},
 				].map(({ label, value, red }) => (
 					<div
 						key={label}
 						className='border border-border rounded-[10px] p-3 flex flex-col items-center gap-0.5'
 					>
 						<span
-							className={`text-xl font-bold ${red ? "text-brand-red" : "text-black"}`}
+							className={`text-xl font-bold ${red ? 'text-brand-red' : 'text-black'}`}
 						>
 							{value}
 						</span>
@@ -81,9 +89,10 @@ export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
 				))}
 			</div>
 
-			{/* Selected courses */}
 			<div className='flex flex-col gap-1'>
-				<h3 className='text-sm font-medium text-black'>Selected Courses</h3>
+				<h3 className='text-sm font-medium text-black'>
+					Selected Courses
+				</h3>
 				<div className='flex flex-col gap-1 max-h-60 overflow-y-auto'>
 					{selected.length === 0 ? (
 						<p className='text-xs text-label py-3 text-center'>
@@ -92,7 +101,7 @@ export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
 					) : (
 						selected.map((course) => (
 							<div
-								key={course.code}
+								key={course.offeringId}
 								className='flex items-center justify-between gap-2 border border-border rounded-lg px-3 py-2'
 							>
 								<div className='flex flex-col min-w-0'>
@@ -106,17 +115,15 @@ export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
 								<div className='flex items-center gap-2 shrink-0'>
 									<span className='text-xs text-label'>
 										{course.units}
-										{course.units === 1 ? "unit" : "units"}
+										{course.units === 1 ? 'unit' : 'units'}
 									</span>
-									{course.type !== "Compulsory" && (
-										<button
-											onClick={() => onRemove(course)}
-											aria-label={`Remove ${course.title}`}
-											className='text-label hover:text-red-500 transition'
-										>
-											×
-										</button>
-									)}
+									<button
+										onClick={() => onRemove(course)}
+										aria-label={`Remove ${course.title}`}
+										className='text-label hover:text-red-500 transition'
+									>
+										×
+									</button>
 								</div>
 							</div>
 						))
@@ -124,39 +131,37 @@ export default function UnitLoadSummary({ selected, onRemove, onSubmit }) {
 				</div>
 			</div>
 
-			{/* Warning/error message */}
 			{(isExceeded || isTooFew) && (
 				<div
 					className={`flex items-start gap-2 text-xs px-3 py-2 rounded-lg ${
 						isExceeded
-							? "bg-red-50 text-red-600"
-							: "bg-yellow-50 text-yellow-700"
+							? 'bg-red-50 text-red-600'
+							: 'bg-yellow-50 text-yellow-700'
 					}`}
 				>
 					<span className='shrink-0'>⚠</span>
 					<span>
 						{isExceeded
-							? `You've exceeded the maximum load by ${totalUnits - MAX_UNITS} units. Please remove some courses`
-							: `Add at least ${MIN_UNITS - totalUnits} more units to meet the minimum requirement.`}
+							? `You've exceeded the maximum load by ${totalUnits - maxUnits} units. Please remove some courses`
+							: `Add at least ${minUnits - totalUnits} more units to meet the minimum requirement.`}
 					</span>
 				</div>
 			)}
 
-			{/* Submit button */}
 			<button
 				onClick={onSubmit}
-				disabled={!isValid}
+				disabled={!isValid || isSubmitting}
 				className={`flex items-center justify-center gap-2 w-full py-3 rounded-[10px] text-sm font-semibold transition ${
 					isValid
-						? "bg-brand-red text-white hover:bg-red-700"
-						: "bg-gray-100 text-label cursor-not-allowed"
+						? 'bg-brand-red text-white hover:bg-red-700'
+						: 'bg-gray-100 text-label cursor-not-allowed'
 				}`}
 			>
 				<SubmitIcon
-					className={`size-4 ${isValid ? "[&_path]:stroke-white" : "[&_path]:stroke-label"}`}
+					className={`size-4 ${isValid ? '[&_path]:stroke-white' : '[&_path]:stroke-label'}`}
 					aria-hidden='true'
 				/>
-				Submit Registration
+				{isSubmitting ? 'Submitting...' : 'Submit Registration'}
 			</button>
 		</div>
 	);

@@ -12,6 +12,7 @@ const ROLE_REDIRECTS = {
 
 export default function LoginPage() {
 	const [values, setValues] = useState({ email: '', password: '' });
+	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
 	const { mutate, isPending, error } = useLogin();
 
@@ -59,14 +60,28 @@ export default function LoginPage() {
 							onChange={handleChange}
 							className='text-sm placeholder:text-[#808080] bg-brand border-brand focus:border-brand-border rounded-sm px-6 py-3'
 						/>
-						<input
-							type='password'
-							name='password'
-							placeholder='Password'
-							value={values.password}
-							onChange={handleChange}
-							className='text-sm placeholder:text-[#808080] bg-brand border-brand focus:border-brand-border rounded-sm px-6 py-3'
-						/>
+						<div className='relative'>
+							<input
+								type={showPassword ? 'text' : 'password'}
+								name='password'
+								placeholder='Password'
+								value={values.password}
+								onChange={handleChange}
+								className='w-full text-sm placeholder:text-[#808080] bg-brand border-brand focus:border-brand-border rounded-sm px-6 py-3 pr-11'
+							/>
+							<button
+								type='button'
+								onClick={() => setShowPassword((prev) => !prev)}
+								aria-label={
+									showPassword
+										? 'Hide password'
+										: 'Show password'
+								}
+								className='absolute right-3 top-1/2 -translate-y-1/2 text-[#808080]'
+							>
+								{showPassword ? <EyeOffIcon /> : <EyeIcon />}
+							</button>
+						</div>
 					</div>
 					{errorMessage && (
 						<p className='text-red-500 text-xs text-center'>
@@ -89,5 +104,59 @@ export default function LoginPage() {
 				</button>
 			</form>
 		</div>
+	);
+}
+
+function EyeIcon() {
+	return (
+		<svg
+			width='18'
+			height='18'
+			viewBox='0 0 24 24'
+			fill='none'
+			xmlns='http://www.w3.org/2000/svg'
+		>
+			<path
+				d='M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinecap='round'
+				strokeLinejoin='round'
+			/>
+			<circle
+				cx='12'
+				cy='12'
+				r='3'
+				stroke='currentColor'
+				strokeWidth='1.8'
+			/>
+		</svg>
+	);
+}
+
+function EyeOffIcon() {
+	return (
+		<svg
+			width='18'
+			height='18'
+			viewBox='0 0 24 24'
+			fill='none'
+			xmlns='http://www.w3.org/2000/svg'
+		>
+			<path
+				d='M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.88 3.88M1 1l22 22'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinecap='round'
+				strokeLinejoin='round'
+			/>
+			<path
+				d='M9.53 9.53a3 3 0 0 0 4.24 4.24'
+				stroke='currentColor'
+				strokeWidth='1.8'
+				strokeLinecap='round'
+				strokeLinejoin='round'
+			/>
+		</svg>
 	);
 }
