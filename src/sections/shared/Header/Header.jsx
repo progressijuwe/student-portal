@@ -39,10 +39,10 @@ export function Header({ onMenuClick }) {
 			: '';
 
 	return (
-		<header className='border-b border-border px-6 py-4 flex gap-11 items-center justify-between md:justify-end'>
+		<header className='border-b border-border px-6 py-4 flex gap-11 items-center justify-between lg:justify-end'>
 			<button
 				onClick={onMenuClick}
-				className='md:hidden'
+				className='lg:hidden'
 				aria-label='Open menu'
 			>
 				<Hamburger aria-hidden='true' />
@@ -51,13 +51,13 @@ export function Header({ onMenuClick }) {
 			<img
 				src={Logo}
 				alt='Portal logo'
-				className='w-10.5 h-10.5 object-cover md:hidden'
+				className='w-10.5 h-10.5 object-cover lg:hidden'
 			/>
 
 			<div className='flex gap-2 items-center'>
 				<Avatar src={profileImage} name={displayName} size='sm' />
 
-				<div className='hidden md:flex flex-col text-black'>
+				<div className='hidden lg:flex flex-col text-black'>
 					<p className='font-semibold text-xs'>{displayName}</p>
 
 					{!isAdmin && (
@@ -66,7 +66,7 @@ export function Header({ onMenuClick }) {
 				</div>
 			</div>
 
-			<div className='items-center gap-6 hidden md:flex'>
+			<div className='items-center gap-6 hidden lg:flex'>
 				<button type='button' aria-label='Settings'>
 					<Settings />
 				</button>
