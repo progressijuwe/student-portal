@@ -41,7 +41,7 @@ export default function ProfileInfo({
 
 	if (isEditing) {
 		const fields = isLecturer
-			? [...EDITABLE_FIELDS, ...LECTURER_FIELDS]
+			? [...LECTURER_FIELDS, ...EDITABLE_FIELDS]
 			: EDITABLE_FIELDS;
 
 		return (
