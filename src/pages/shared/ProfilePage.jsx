@@ -109,7 +109,7 @@ export default function ProfilePage() {
 					formValues={formValues}
 					onFieldChange={handleFieldChange}
 				/>
-				<ProfileDownloads />
+				<ProfileDownloads role={user.role} />
 			</section>
 		</div>
 	);

@@ -1,32 +1,70 @@
-import EmptyState from "../../components/ui/EmptyState";
-import CoursePane from "../../sections/lecturer/courses/CoursePane";
-import CourseSelect from "../../sections/lecturer/courses/CourseSelect";
-import CourseStudents from "../../sections/lecturer/courses/CourseStudents";
-import { useState } from "react"
+import { useState, useMemo } from 'react';
+import EmptyState from '../../components/ui/EmptyState';
+import CoursePane from '../../sections/lecturer/courses/CoursePane';
+import CourseSelect from '../../sections/lecturer/courses/CourseSelect';
+import CourseStudents from '../../sections/lecturer/courses/CourseStudents';
+import { useLecturerCourses } from '../../hooks/lecturer/useLecturerCourses';
 
-const courses = [
-  { label: 'SEN 401 - Software Engineering Security',  code: 'SEN 401', title: 'Software Engineering Security',  submittedCount: 7, approvedCount: 6 },
-  { label: 'SEN 403 - Database Management Systems',    code: 'SEN 403', title: 'Database Management Systems',    submittedCount: 5, approvedCount: 5 },
-  { label: 'SEN 301 - Data Structures and Algorithms', code: 'SEN 301', title: 'Data Structures and Algorithms', submittedCount: 3, approvedCount: 2 },
-]
+export default function LecturerCoursesPage() {
+	const { data, isLoading, isError } = useLecturerCourses();
 
-export default function LecturerCoursesPage(){
-    const [selectedCourse, setSelectedCourse] = useState(courses[0] || null)
-    
-    if (!courses.length) {
-        return (
-            <EmptyState 
-                title="No courses found"
-                description="Courses will appear here once assigned."
-            />
-        )
-    }
+	const courses = useMemo(() => {
+		return (data?.courses ?? []).map((entry) => ({
+			offeringId: entry.offering.id,
+			code: entry.offering.course.code,
+			title: entry.offering.course.title,
+			label: `${entry.offering.course.code} - ${entry.offering.course.title}`,
+			level: entry.offering.course.level,
+			credits: entry.offering.course.credit_units,
+			semester: entry.offering.semester,
+			enrolledCount: entry.enrolled_count,
+		}));
+	}, [data]);
 
-    return(
-        <div className="px-5 py-8 flex flex-col gap-6">
-            <CourseSelect options={courses} value={selectedCourse} onSelect={setSelectedCourse} />
-            <CoursePane />
-            <CourseStudents />
-        </div>
-    )
+	const [selectedOfferingId, setSelectedOfferingId] = useState(null);
+
+	if (!selectedOfferingId && courses.length > 0) {
+		setSelectedOfferingId(courses[0].offeringId);
+	}
+
+	const selectedCourse =
+		courses.find((c) => c.offeringId === selectedOfferingId) ?? null;
+
+	if (isLoading) {
+		return (
+			<p className='px-5 py-8 text-sm text-label'>Loading courses...</p>
+		);
+	}
+
+	if (isError) {
+		return (
+			<p className='px-5 py-8 text-sm text-red-500'>
+				Couldn't load courses.
+			</p>
+		);
+	}
+
+	if (!courses.length) {
+		return (
+			<EmptyState
+				title='No courses found'
+				description='Courses will appear here once assigned.'
+			/>
+		);
+	}
+
+	return (
+		<div className='px-5 py-8 flex flex-col gap-6'>
+			<CourseSelect
+				options={courses}
+				value={selectedCourse}
+				onSelect={(course) => setSelectedOfferingId(course.offeringId)}
+			/>
+			<CoursePane course={selectedCourse} />
+			<CourseStudents
+				offeringId={selectedOfferingId}
+				course={selectedCourse}
+			/>
+		</div>
+	);
 }

@@ -1,20 +1,32 @@
+export default function CourseSelect({ options = [], value, onSelect }) {
+	const handleChange = (e) => {
+		const selected = options.find(
+			(opt) => String(opt.offeringId) === e.target.value,
+		);
+		onSelect(selected);
+	};
 
-
-export default function CourseSelect({ options = [], value, onSelect }){
-
-    const handleChange = (e) => {
-        const selected = options.find(opt => opt.code === e.target.value)
-        onSelect(selected)
-    }
-
-    return(
-        <section className="flex flex-col gap-2 w-full max-w-185">
-            <h2 className="text-sm md:text-base text-label font-medium">Select Course</h2>
-            <select value={value.code || ""} id="course-select" onChange={handleChange} className="border border-[#D1D5DC] text-sm lg:text-base rounded-[10px] p-2">
-                {options.map((opt) => (
-                    <option key={opt.code} value={opt.code} className="capitalize text-sm">{opt.label}</option>
-                ))}
-            </select>
-        </section>
-    )
+	return (
+		<section className='flex flex-col gap-2 w-full max-w-185'>
+			<h2 className='text-sm md:text-base text-label font-medium'>
+				Select Course
+			</h2>
+			<select
+				value={value?.offeringId ?? ''}
+				id='course-select'
+				onChange={handleChange}
+				className='border border-[#D1D5DC] text-sm lg:text-base rounded-[10px] p-2'
+			>
+				{options.map((opt) => (
+					<option
+						key={opt.offeringId}
+						value={opt.offeringId}
+						className='capitalize text-sm'
+					>
+						{opt.label}
+					</option>
+				))}
+			</select>
+		</section>
+	);
 }

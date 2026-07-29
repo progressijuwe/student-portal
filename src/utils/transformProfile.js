@@ -10,7 +10,7 @@ export function transformProfile(user, cgpa) {
 		role: user.role,
 		prefix: isLecturer ? user.lecturer_profile?.prefix : null,
 		name: user.name,
-		id: isStudent ? user.student_id : user.staff_id,
+		id: isStudent ? user.student_id : 'Lecturer',
 		dept: user.department?.name,
 		faculty: user.department?.faculty,
 		studyYear: isStudent ? getLevel(user.entry_year) : null,
