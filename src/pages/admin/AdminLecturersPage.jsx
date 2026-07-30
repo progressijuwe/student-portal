@@ -1,30 +1,29 @@
-import { AnimatePresence } from "framer-motion";
-import { useEntityPage } from "../../hooks/useEntityPage";
-import { useLecturerQuery } from "../../hooks/useLecturerQuery";
-import { filterLecturers } from "../../utils/filterLecturers";
-import { lecturerFilterFields } from "../../constants/filterConfig";
-import TableToolbar from "../../components/shared/TableToolbar";
-import LecturerTable from "../../sections/admin/lecturers/LecturerTable";
-import Pagination from "../../components/ui/Pagination";
-import AddLecturerModal from "../../sections/admin/modals/AddLecturerModal";
-import AddSuccessModal from "../../sections/admin/modals/AddSuccessModal";
-import FilterModal from "../../sections/admin/modals/FilterModal";
-import DeleteUserModal from "../../sections/admin/modals/DeleteUserModal";
-import UpdateLecturerModal from "../../sections/admin/modals/UpdateLecturerModal";
-import ProfileModal from "../../sections/admin/modals/ProfileModal";
-import EntityPageShell from "../../components/ui/EntityPageShell";
+import { AnimatePresence } from 'framer-motion';
+import { useEntityPage } from '../../hooks/useEntityPage';
+import { useLecturerQuery } from '../../hooks/useLecturerQuery';
+import { filterLecturers } from '../../utils/filterLecturers';
+import TableToolbar from '../../components/shared/TableToolbar';
+import LecturerTable from '../../sections/admin/lecturers/LecturerTable';
+import Pagination from '../../components/ui/Pagination';
+import AddLecturerModal from '../../sections/admin/modals/AddLecturerModal';
+import AddSuccessModal from '../../sections/admin/modals/AddSuccessModal';
+import FilterModal from '../../sections/admin/modals/FilterModal';
+import DeleteUserModal from '../../sections/admin/modals/DeleteUserModal';
+import UpdateLecturerModal from '../../sections/admin/modals/UpdateLecturerModal';
+import ProfileModal from '../../sections/admin/modals/ProfileModal';
+import EntityPageShell from '../../components/ui/EntityPageShell';
 
-import { lecturersData } from "../../data/lecturersData";
+import { lecturersData } from '../../data/lecturersData';
 
 const MODAL = {
-	ADD: "add",
-	SUCCESS: "success",
-	FILTER: "filter",
-	VIEW: "view",
-	DELETE: "delete",
-	DELETE_SUCCESS: "delete-success",
-	EDIT: "edit",
-	EDIT_SUCCESS: "edit-success",
+	ADD: 'add',
+	SUCCESS: 'success',
+	FILTER: 'filter',
+	VIEW: 'view',
+	DELETE: 'delete',
+	DELETE_SUCCESS: 'delete-success',
+	EDIT: 'edit',
+	EDIT_SUCCESS: 'edit-success',
 };
 
 export default function AdminLecturersPage() {
@@ -92,7 +91,10 @@ export default function AdminLecturersPage() {
 					/>
 				)}
 				{modal.type === MODAL.SUCCESS && (
-					<AddSuccessModal onClose={close} text='Lecturer Added Successfully' />
+					<AddSuccessModal
+						onClose={close}
+						text='Lecturer Added Successfully'
+					/>
 				)}
 				{modal.type === MODAL.FILTER && (
 					<FilterModal

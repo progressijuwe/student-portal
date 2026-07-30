@@ -1,30 +1,29 @@
-import { defs } from "framer-motion/client";
-import { useState } from "react";
-import Modal from "../../../components/ui/Modal";
-import Warning from "../../../assets/svg/warningIcon.svg?react";
-import { Button } from "../../../components/ui/Button";
+import { useState } from 'react';
+import Modal from '../../../components/ui/Modal';
+import Warning from '../../../assets/svg/warningIcon.svg?react';
+import { Button } from '../../../components/ui/Button';
 
 export default function DeleteUserModal({
 	onClose,
-	onSuccess,
+	onConfirm,
 	description,
 	heading,
 }) {
 	const [submitting, setSubmitting] = useState(false);
+	const [error, setError] = useState(null);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setError(null);
 
 		try {
 			setSubmitting(true);
-
-			// fake API
-			await new Promise((res) => setTimeout(res, 1000));
-
-			onClose();
-			onSuccess();
+			await onConfirm();
 		} catch (err) {
-			console.error(err);
+			setError(
+				err.response?.data?.message ??
+					'Failed to delete. Please try again.',
+			);
 		} finally {
 			setSubmitting(false);
 		}
@@ -46,17 +45,25 @@ export default function DeleteUserModal({
 						{description}
 					</p>
 					<span className='bg-[#FFEFEF] pl-5 pr-1.5 border-l-5 border-[#FF0000] py-2.5 font-medium text-xs lg:text-sm text-[#FF0000]'>
-						<span className='font-semibold'>Warning: </span>This action cannot
-						be undone. All associated data will be permanently removed from the
-						system.
+						<span className='font-semibold'>Warning: </span>This
+						action cannot be undone.
 					</span>
+					{error && (
+						<p className='text-red-500 text-xs text-center'>
+							{error}
+						</p>
+					)}
 				</div>
 				<div className='w-full flex justify-end gap-4'>
 					<Button type='button' variant='tertiary' onClick={onClose}>
 						Cancel
 					</Button>
-					<Button type='submit' disabled={submitting} variant='delete'>
-						Delete Permanently
+					<Button
+						type='submit'
+						disabled={submitting}
+						variant='delete'
+					>
+						{submitting ? 'Deleting...' : 'Delete Permanently'}
 					</Button>
 				</div>
 			</form>
