@@ -1,62 +1,88 @@
-import { AnimatePresence } from "framer-motion";
-import { useEntityPage } from "../../hooks/useEntityPage";
-import { useStudentQuery } from "../../hooks/useStudentQuery";
-import { filterStudents } from "../../utils/filterStudents";
-import { studentFilterFields } from "../../constants/filterConfig";
-import TableToolbar from "../../components/shared/TableToolbar";
-import StudentTable from "../../sections/admin/students/StudentTable";
-import Pagination from "../../components/ui/Pagination";
-import AddStudentModal from "../../sections/admin/modals/AddStudentModal";
-import AddSuccessModal from "../../sections/admin/modals/AddSuccessModal";
-import FilterModal from "../../sections/admin/modals/FilterModal";
-import DeleteUserModal from "../../sections/admin/modals/DeleteUserModal";
-import UpdateStudentModal from "../../sections/admin/modals/UpdateStudentModal";
-import ProfileModal from "../../sections/admin/modals/ProfileModal";
-import EntityPageShell from "../../components/ui/EntityPageShell";
-
-import { studentsData } from "../../data/studentsData";
+import { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { useStudentQuery } from '../../hooks/useStudentQuery';
+import { useAdminUsers } from '../../hooks/admin/useAdminUsers';
+import { useDeleteUser } from '../../hooks/admin/useUserMutations';
+import { useModal } from '../../hooks/useModal';
+import { useDepartments } from '../../hooks/useDepartments';
+import { buildStudentFilterFields } from '../../constants/filterConfig';
+import TableToolbar from '../../components/shared/TableToolbar';
+import StudentTable from '../../sections/admin/students/StudentTable';
+import Pagination from '../../components/ui/Pagination';
+import AddStudentModal from '../../sections/admin/modals/AddStudentModal';
+import AddSuccessModal from '../../sections/admin/modals/AddSuccessModal';
+import FilterModal from '../../sections/admin/modals/FilterModal';
+import DeleteUserModal from '../../sections/admin/modals/DeleteUserModal';
+import EditStudentModal from '../../sections/admin/modals/EditStudentModal';
+import ProfileModal from '../../sections/admin/modals/ProfileModal';
+import EntityPageShell from '../../components/ui/EntityPageShell';
 
 const MODAL = {
-	ADD: "add",
-	SUCCESS: "success",
-	FILTER: "filter",
-	VIEW: "view",
-	DELETE: "delete",
-	DELETE_SUCCESS: "delete-success",
-	EDIT: "edit",
-	EDIT_SUCCESS: "edit-success",
+	ADD: 'add',
+	SUCCESS: 'success',
+	FILTER: 'filter',
+	VIEW: 'view',
+	DELETE: 'delete',
+	DELETE_SUCCESS: 'delete-success',
+	EDIT: 'edit',
+	EDIT_SUCCESS: 'edit-success',
 };
 
+function transformStudent(user) {
+	return {
+		id: user.student_id,
+		rawId: user.id,
+		name: user.name,
+		email: user.email,
+		phone: user.phone,
+		department: user.department?.name,
+		level: user.level?.replace(' Level', ''),
+		enrollmentYear: user.entry_year ? String(user.entry_year) : '',
+		profilePhoto: user.profile_photo_url,
+	};
+}
+
 export default function AdminStudentsPage() {
-	const {
-		search,
-		filters,
+	const { search, filters, page, setSearch, setFilters, setPage } =
+		useStudentQuery();
+	const { modal, open, close } = useModal();
+	const { mutateAsync: deleteUser } = useDeleteUser();
+	const { data: departments = [] } = useDepartments();
+	const studentFilterFields = buildStudentFilterFields(departments);
+
+	const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+	useEffect(() => {
+		const t = setTimeout(() => setDebouncedSearch(search), 300);
+		return () => clearTimeout(t);
+	}, [search]);
+
+	const { data, isLoading, isError, refetch } = useAdminUsers({
+		role: 'student',
 		page,
-		setSearch,
-		setFilters,
-		setPage,
-		items,
-		filteredItems,
-		totalPages,
-		loading,
-		error,
-		modal,
-		open,
-		close,
-		fetchItems,
-		handleView,
-		handleEdit,
-		handleDelete,
-		handleSuccess,
-	} = useEntityPage({
-		data: studentsData,
-		filterFn: filterStudents,
-		useQueryHook: useStudentQuery,
-		modals: MODAL,
+		search: debouncedSearch || undefined,
+		faculty_id: filters.faculty_id || undefined,
+		department_id: filters.department_id || undefined,
+		level: filters.level || undefined,
 	});
 
-	const openStudentModal = () => open(MODAL.ADD);
-	const openFilterModal = () => open(MODAL.FILTER);
+	const students = (data?.data ?? []).map(transformStudent);
+	const totalPages = data?.meta?.last_page ?? 1;
+	const total = data?.meta?.total ?? 0;
+
+	const handleView = (student) => open(MODAL.VIEW, student);
+	const handleEdit = (student) => open(MODAL.EDIT, student);
+	const handleDelete = (student) => open(MODAL.DELETE, student);
+
+	const handleSuccess = (type) => {
+		open(type);
+		setTimeout(close, 2000);
+	};
+
+	const handleConfirmDelete = async (student) => {
+		await deleteUser(student.rawId);
+		handleSuccess(MODAL.DELETE_SUCCESS);
+	};
 
 	return (
 		<EntityPageShell title='Students'>
@@ -69,19 +95,19 @@ export default function AdminStudentsPage() {
 				searchPlaceholder='Search students'
 			/>
 			<StudentTable
-				students={items}
-				loading={loading}
-				error={error}
-				onRetry={fetchItems}
+				students={students}
+				loading={isLoading}
+				error={isError}
+				onRetry={refetch}
 				onView={handleView}
 				onEdit={handleEdit}
 				onDelete={handleDelete}
 			/>
-			{!error && !loading && totalPages > 1 && (
+			{!isError && !isLoading && totalPages > 1 && (
 				<Pagination
 					page={page}
-					total={filteredItems.length}
-					perPage={8}
+					total={total}
+					perPage={20}
 					onPageChange={setPage}
 				/>
 			)}
@@ -93,7 +119,10 @@ export default function AdminStudentsPage() {
 					/>
 				)}
 				{modal.type === MODAL.SUCCESS && (
-					<AddSuccessModal onClose={close} text='Student Added Successfully' />
+					<AddSuccessModal
+						onClose={close}
+						text='Student Added Successfully'
+					/>
 				)}
 				{modal.type === MODAL.FILTER && (
 					<FilterModal
@@ -106,9 +135,8 @@ export default function AdminStudentsPage() {
 				)}
 				{modal.type === MODAL.DELETE && (
 					<DeleteUserModal
-						student={modal.data}
 						onClose={close}
-						onSuccess={() => handleSuccess(MODAL.DELETE_SUCCESS)}
+						onConfirm={() => handleConfirmDelete(modal.data)}
 						heading='Delete Student'
 						description='Are you sure you want to delete this student? This will remove all their records, course registrations, and academic history'
 					/>
@@ -120,7 +148,7 @@ export default function AdminStudentsPage() {
 					/>
 				)}
 				{modal.type === MODAL.EDIT && (
-					<UpdateStudentModal
+					<EditStudentModal
 						student={modal.data}
 						onClose={close}
 						onSuccess={() => handleSuccess(MODAL.EDIT_SUCCESS)}
@@ -136,7 +164,7 @@ export default function AdminStudentsPage() {
 					<ProfileModal
 						heading='Student Profile'
 						user={modal.data}
-						userType='lecturer'
+						userType='student'
 						onClose={close}
 						onEdit={handleEdit}
 						onDelete={handleDelete}

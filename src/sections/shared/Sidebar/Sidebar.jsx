@@ -64,7 +64,7 @@ export default function Sidebar({ isOpen = false, onClose }) {
 				aria-hidden={!sidebarVisible}
 				className={`
           fixed lg:static top-0 left-0 z-50
-          h-screen max-w-60 w-full bg-white
+          h-dvh max-w-60 w-full bg-white
           flex flex-col justify-between
           border-r border-border px-5 py-6
           focus:outline-0
