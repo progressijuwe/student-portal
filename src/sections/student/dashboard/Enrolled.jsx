@@ -29,7 +29,7 @@ export default function Enrolled() {
 					</button>
 				)}
 			</div>
-			<div className='flex flex-col md:flex-row gap-4'>
+			<div className='flex flex-col xl:flex-row gap-4'>
 				{isLoading && <p className='text-sm text-label'>Loading...</p>}
 				{isError && (
 					<p className='text-sm text-red-500'>
