@@ -1,27 +1,26 @@
-import { AnimatePresence } from "framer-motion";
-import { useEntityPage } from "../../hooks/useEntityPage";
-import { useCourseQuery } from "../../hooks/useCourseQuery";
-import { filterCourses } from "../../utils/filterCourses";
-import { courseFilterFields } from "../../constants/filterConfig";
-import TableToolbar from "../../components/shared/TableToolbar";
-import CourseGrid from "../../sections/admin/courses/CourseGrid";
-import Pagination from "../../components/ui/Pagination";
-import AddCourseModal from "../../sections/admin/modals/AddCourseModal";
-import AddSuccessModal from "../../sections/admin/modals/AddSuccessModal";
-import DeleteUserModal from "../../sections/admin/modals/DeleteUserModal";
-import FilterModal from "../../sections/admin/modals/FilterModal";
-import EntityPageShell from "../../components/ui/EntityPageShell";
-import { coursesData } from "../../data/courseData";
-import EditCourseModal from "../../sections/admin/modals/EditCourseModal";
+import { AnimatePresence } from 'framer-motion';
+import { useEntityPage } from '../../hooks/useEntityPage';
+import { useCourseQuery } from '../../hooks/useCourseQuery';
+import { filterCourses } from '../../utils/filterCourses';
+import TableToolbar from '../../components/shared/TableToolbar';
+import CourseGrid from '../../sections/admin/courses/CourseGrid';
+import Pagination from '../../components/ui/Pagination';
+import AddCourseModal from '../../sections/admin/modals/AddCourseModal';
+import AddSuccessModal from '../../sections/admin/modals/AddSuccessModal';
+import DeleteUserModal from '../../sections/admin/modals/DeleteUserModal';
+import FilterModal from '../../sections/admin/modals/FilterModal';
+import EntityPageShell from '../../components/ui/EntityPageShell';
+import { coursesData } from '../../data/courseData';
+import EditCourseModal from '../../sections/admin/modals/EditCourseModal';
 
 const MODAL = {
-	ADD: "add",
-	SUCCESS: "success",
-	FILTER: "filter",
-	DELETE: "delete",
-	DELETE_SUCCESS: "delete-success",
-	EDIT: "edit",
-	EDIT_SUCCESS: "edit-success",
+	ADD: 'add',
+	SUCCESS: 'success',
+	FILTER: 'filter',
+	DELETE: 'delete',
+	DELETE_SUCCESS: 'delete-success',
+	EDIT: 'edit',
+	EDIT_SUCCESS: 'edit-success',
 };
 
 export default function AdminCoursesPage() {
@@ -84,7 +83,10 @@ export default function AdminCoursesPage() {
 					/>
 				)}
 				{modal.type === MODAL.SUCCESS && (
-					<AddSuccessModal onClose={close} text='Course Added Successfully' />
+					<AddSuccessModal
+						onClose={close}
+						text='Course Added Successfully'
+					/>
 				)}
 				{modal.type === MODAL.FILTER && (
 					<FilterModal
@@ -105,7 +107,10 @@ export default function AdminCoursesPage() {
 					/>
 				)}
 				{modal.type === MODAL.DELETE_SUCCESS && (
-					<AddSuccessModal onClose={close} text='Course Deleted Successfully' />
+					<AddSuccessModal
+						onClose={close}
+						text='Course Deleted Successfully'
+					/>
 				)}
 				{modal.type === MODAL.EDIT && (
 					<EditCourseModal
@@ -115,7 +120,10 @@ export default function AdminCoursesPage() {
 					/>
 				)}
 				{modal.type === MODAL.EDIT_SUCCESS && (
-					<AddSuccessModal onClose={close} text='Course Updated Successfully' />
+					<AddSuccessModal
+						onClose={close}
+						text='Course Updated Successfully'
+					/>
 				)}
 			</AnimatePresence>
 		</EntityPageShell>
