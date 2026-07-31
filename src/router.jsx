@@ -11,6 +11,7 @@ import PageFallback from './components/ui/PageFallback';
  * entire admin bundle — including FullCalendar, Chart.js and the Google Maps
  * SDK — before their dashboard could paint.
  */
+const LandingPage = lazy(() => import('./pages/shared/LandingPage'));
 const LoginPage = lazy(() => import('./pages/shared/LoginPage'));
 const ProfilePage = lazy(() => import('./pages/shared/ProfilePage'));
 
@@ -58,8 +59,11 @@ const page = (Component) => (
 
 export const router = createBrowserRouter([
 	{
+		// The public front door. Previously this redirected straight to /login,
+		// so there was nowhere to send someone who had not been given an
+		// account yet and no explanation of what the portal is.
 		path: '/',
-		element: <Navigate to='/login' replace />,
+		element: page(LandingPage),
 		errorElement: <RouteError />,
 	},
 	{
