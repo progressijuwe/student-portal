@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import { loginRequest } from "../api/auth";
-import { useAuth } from "../context/AuthContext";
+import { useMutation } from '@tanstack/react-query';
+import { loginRequest } from '../api/auth';
+import { useAuth } from '../context/useAuth';
 
 export function useLogin() {
 	const { login } = useAuth();

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 import logo from '../../../assets/images/portal-logo.png';
 import Logout from '../../../assets/svg/logout.svg?react';
 import { studentLinks, lecturerLinks, adminLinks } from './sidebarLinks';

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import PageHeading from '../../components/ui/PageHeading';
 import ProfileCard from '../../sections/shared/profile/ProfileCard';
 import ProfileDownloads from '../../sections/shared/profile/ProfileDownloads';
@@ -25,20 +25,24 @@ export default function ProfilePage() {
 		[rawUser, dashboard?.cgpa],
 	);
 
-	useEffect(() => {
-		if (user && isEditing) {
-			setFormValues({
-				phone: user.phone ?? '',
-				address: user.address ?? '',
-				dob: user.dob ?? '',
-				emergencyContactName: user.emergencyContactName ?? '',
-				emergencyContactNumber: user.emergencyContactNumber ?? '',
-				prefix: user.prefix ?? '',
-				highestQualification: user.highestQualification ?? '',
-				specialization: user.specialization ?? '',
-			});
-		}
-	}, [isEditing, user]);
+	// Seeded once, when editing starts. Re-seeding from an effect meant any
+	// background refetch of the profile silently overwrote whatever the user
+	// had typed but not yet saved.
+	const startEditing = useCallback(() => {
+		if (!user) return;
+
+		setFormValues({
+			phone: user.phone ?? '',
+			address: user.address ?? '',
+			dob: user.dob ?? '',
+			emergencyContactName: user.emergencyContactName ?? '',
+			emergencyContactNumber: user.emergencyContactNumber ?? '',
+			prefix: user.prefix ?? '',
+			highestQualification: user.highestQualification ?? '',
+			specialization: user.specialization ?? '',
+		});
+		setIsEditing(true);
+	}, [user]);
 
 	const handleFieldChange = (key, value) => {
 		setFormValues((prev) => ({ ...prev, [key]: value }));
@@ -94,7 +98,7 @@ export default function ProfilePage() {
 				<ProfileCard
 					{...user}
 					isEditing={isEditing}
-					onEditClick={() => setIsEditing(true)}
+					onEditClick={startEditing}
 					onSaveClick={handleSave}
 					isSaving={isSaving}
 				/>

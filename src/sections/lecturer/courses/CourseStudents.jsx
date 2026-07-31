@@ -6,7 +6,7 @@ import Search from '../../../assets/svg/search.svg?react';
 import StudentTable from './StudentTable';
 import { useOfferingStudents } from '../../../hooks/lecturer/useOfferingStudents';
 
-export default function CourseStudents({ offeringId, course }) {
+export default function CourseStudents({ offeringId }) {
 	const { data, isLoading, isError } = useOfferingStudents(offeringId);
 	const [search, setSearch] = useState('');
 

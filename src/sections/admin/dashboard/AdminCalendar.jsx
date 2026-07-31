@@ -1,5 +1,6 @@
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import '../../../styles/calendar.css';
 
 export default function AdminCalendar() {
 	return (

@@ -1,13 +1,36 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/images/portal-logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Portal</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!--
+			Served from /public so the path resolves identically in dev and in the
+			production build. It previously pointed at /src/assets/... — a
+			dev-server-only path — and declared image/svg+xml for a PNG.
+		-->
+		<link rel="icon" type="image/png" href="/portal-logo.png" />
+		<link rel="apple-touch-icon" href="/portal-logo.png" />
+
+		<title>Student Portal</title>
+		<meta
+			name="description"
+			content="Student portal for course registration, timetables, results and academic records."
+		/>
+		<meta name="theme-color" content="#940002" />
+
+		<!--
+			The portal is behind authentication and displays personal academic
+			records; it should never appear in a search index.
+		-->
+		<meta name="robots" content="noindex, nofollow" />
+	</head>
+	<body>
+		<div id="root"></div>
+		<noscript>
+			This portal requires JavaScript. Please enable it in your browser
+			settings and reload the page.
+		</noscript>
+		<script type="module" src="/src/main.jsx"></script>
+	</body>
 </html>

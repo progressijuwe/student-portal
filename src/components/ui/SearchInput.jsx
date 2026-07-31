@@ -1,11 +1,11 @@
-import Search from "../../assets/svg/search.svg?react";
+import Search from '../../assets/svg/search.svg?react';
 
 export default function SearchInput({
-	value = "",
+	value = '',
 	onChange,
-	placeholder = "Search",
-	id = "search-input",
-	className = "",
+	placeholder = 'Search',
+	id = 'search-input',
+	className = '',
 }) {
 	return (
 		<span

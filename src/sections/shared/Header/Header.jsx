@@ -1,4 +1,4 @@
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 import Settings from '../../../assets/svg/settings.svg?react';
 import Notifs from '../../../assets/svg/notification-bell.svg?react';
 import Hamburger from '../../../assets/svg/hamburger.svg?react';

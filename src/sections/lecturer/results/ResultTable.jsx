@@ -192,10 +192,7 @@ export default function ResultTable({ data, setData }) {
 									<td className='py-3 px-4 text-xs lg:text-base'>
 										{index + 1}
 									</td>
-									<th
-										scope='row'
-										className='py-3 px-4 font-bold text-xs lg:text-base'
-									>
+									<th className='py-3 px-4 font-bold text-xs lg:text-base'>
 										{student.matric}
 									</th>
 									<td className='py-3 px-4 text-xs lg:text-base text-nowrap'>
@@ -233,10 +230,7 @@ export default function ResultTable({ data, setData }) {
 										/>
 									</td>
 									{/* Project */}
-									<td
-										scope='row'
-										className='relative py-3 px-4 text-xs lg:text-base'
-									>
+									<td className='relative py-3 px-4 text-xs lg:text-base'>
 										<label
 											htmlFor={`project-${student.enrollmentId}`}
 											className='sr-only'
@@ -262,10 +256,7 @@ export default function ResultTable({ data, setData }) {
 										/>
 									</td>
 									{/* Exam */}
-									<td
-										scope='row'
-										className=' relative py-3 px-4 text-xs lg:text-base'
-									>
+									<td className=' relative py-3 px-4 text-xs lg:text-base'>
 										<label
 											htmlFor={`exam-${student.enrollmentId}`}
 											className='sr-only'
@@ -291,10 +282,7 @@ export default function ResultTable({ data, setData }) {
 										/>
 									</td>
 									{/* Grade */}
-									<td
-										scope='row'
-										className='py-3 px-4 text-xs lg:text-base'
-									>
+									<td className='py-3 px-4 text-xs lg:text-base'>
 										{student.letterGrade && (
 											<span
 												className={`px-2 py-1 rounded text-xs ${gradeColor(student.letterGrade)}`}
@@ -304,10 +292,7 @@ export default function ResultTable({ data, setData }) {
 										)}
 									</td>
 									{/* Status */}
-									<td
-										scope='row'
-										className='py-3 px-4 text-xs lg:text-base'
-									>
+									<td className='py-3 px-4 text-xs lg:text-base'>
 										<span
 											className={`px-2.5 py-0.5 rounded-[10px] text-xs ${
 												student.status === 'Draft'

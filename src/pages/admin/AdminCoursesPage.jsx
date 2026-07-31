@@ -1,7 +1,14 @@
 import { AnimatePresence } from 'framer-motion';
-import { useEntityPage } from '../../hooks/useEntityPage';
 import { useCourseQuery } from '../../hooks/useCourseQuery';
-import { filterCourses } from '../../utils/filterCourses';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import {
+	useAdminCourses,
+	useSetCourseActive,
+} from '../../hooks/admin/useAdminCourses';
+import { useModal } from '../../hooks/useModal';
+import { useDepartments } from '../../hooks/useDepartments';
+import { buildCourseFilterFields } from '../../constants/filterConfig';
+import { getErrorMessage } from '../../utils/getErrorMessage';
 import TableToolbar from '../../components/shared/TableToolbar';
 import CourseGrid from '../../sections/admin/courses/CourseGrid';
 import Pagination from '../../components/ui/Pagination';
@@ -9,9 +16,8 @@ import AddCourseModal from '../../sections/admin/modals/AddCourseModal';
 import AddSuccessModal from '../../sections/admin/modals/AddSuccessModal';
 import DeleteUserModal from '../../sections/admin/modals/DeleteUserModal';
 import FilterModal from '../../sections/admin/modals/FilterModal';
-import EntityPageShell from '../../components/ui/EntityPageShell';
-import { coursesData } from '../../data/courseData';
 import EditCourseModal from '../../sections/admin/modals/EditCourseModal';
+import EntityPageShell from '../../components/ui/EntityPageShell';
 
 const MODAL = {
 	ADD: 'add',
@@ -24,30 +30,44 @@ const MODAL = {
 };
 
 export default function AdminCoursesPage() {
-	const {
-		search,
-		filters,
+	const { search, filters, page, setSearch, setFilters, setPage } =
+		useCourseQuery();
+	const { modal, open, close } = useModal();
+	const { data: departments = [] } = useDepartments();
+	const setCourseActive = useSetCourseActive();
+
+	const debouncedSearch = useDebouncedValue(search);
+
+	const { data, isLoading, isError, error, refetch } = useAdminCourses({
 		page,
-		setSearch,
-		setFilters,
-		setPage,
-		items,
-		filteredItems,
-		totalPages,
-		loading,
-		error,
-		modal,
-		open,
-		close,
-		fetchItems,
-		handleEdit,
-		handleDelete,
-		handleSuccess,
-	} = useEntityPage({
-		data: coursesData,
-		filterFn: filterCourses,
-		useQueryHook: useCourseQuery,
+		search: debouncedSearch || undefined,
+		faculty_id: filters.faculty_id || undefined,
+		department_id: filters.department_id || undefined,
+		level: filters.level || undefined,
+		semester: filters.semester || undefined,
+		type: filters.type || undefined,
 	});
+
+	const courses = data?.data ?? [];
+	const meta = data?.meta ?? {};
+
+	const handleEdit = (course) => open(MODAL.EDIT, course);
+	const handleDelete = (course) => open(MODAL.DELETE, course);
+
+	const handleSuccess = (type) => {
+		open(type);
+		setTimeout(close, 2000);
+	};
+
+	// "Delete" deactivates. Every foreign key into courses is restrictOnDelete,
+	// so a real delete would either fail or orphan a transcript.
+	const handleConfirmDeactivate = async (course) => {
+		await setCourseActive.mutateAsync({
+			courseId: course.id,
+			isActive: false,
+		});
+		handleSuccess(MODAL.DELETE_SUCCESS);
+	};
 
 	return (
 		<EntityPageShell title='Courses'>
@@ -59,22 +79,25 @@ export default function AdminCoursesPage() {
 				addLabel='Add Course'
 				searchPlaceholder='Search courses'
 			/>
+
 			<CourseGrid
-				courses={items}
-				loading={loading}
-				error={error}
-				onRetry={fetchItems}
+				courses={courses}
+				loading={isLoading}
+				error={isError ? getErrorMessage(error) : null}
+				onRetry={refetch}
 				onEdit={handleEdit}
 				onDelete={handleDelete}
 			/>
-			{!error && !loading && totalPages > 1 && (
+
+			{!isError && !isLoading && meta.last_page > 1 && (
 				<Pagination
-					page={page}
-					total={filteredItems.length}
-					perPage={12}
+					page={meta.current_page}
+					total={meta.total}
+					perPage={meta.per_page}
 					onPageChange={setPage}
 				/>
 			)}
+
 			<AnimatePresence>
 				{modal.type === MODAL.ADD && (
 					<AddCourseModal
@@ -91,7 +114,7 @@ export default function AdminCoursesPage() {
 				{modal.type === MODAL.FILTER && (
 					<FilterModal
 						heading='Filter Courses'
-						fields={courseFilterFields}
+						fields={buildCourseFilterFields(departments)}
 						onClose={close}
 						onApply={setFilters}
 						initialFilters={filters}
@@ -99,17 +122,16 @@ export default function AdminCoursesPage() {
 				)}
 				{modal.type === MODAL.DELETE && (
 					<DeleteUserModal
-						course={modal.data}
 						onClose={close}
-						onSuccess={() => handleSuccess(MODAL.DELETE_SUCCESS)}
-						heading='Delete Course'
-						description='Are you sure you want to delete this course? This will remove the course and unassign all enrolled students.'
+						onConfirm={() => handleConfirmDeactivate(modal.data)}
+						heading='Deactivate Course'
+						description='This course will stop appearing for registration. Existing enrollments, grades and transcripts are kept intact, and it can be reactivated at any time.'
 					/>
 				)}
 				{modal.type === MODAL.DELETE_SUCCESS && (
 					<AddSuccessModal
 						onClose={close}
-						text='Course Deleted Successfully'
+						text='Course Deactivated Successfully'
 					/>
 				)}
 				{modal.type === MODAL.EDIT && (

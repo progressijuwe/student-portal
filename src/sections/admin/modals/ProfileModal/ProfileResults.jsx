@@ -1,20 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AcademicSession from '../../../student/results/AcademicSession';
-import { useAcademicSessions } from '../../../../hooks/useAcademicSessions';
+import { useSelectedSession } from '../../../../hooks/useSelectedSession';
 import { useAdminStudentGrades } from '../../../../hooks/admin/useAdminStudentGrades';
 import { gradeColor } from '../../../../constants/grading';
 
 export default function ProfileResults({ user }) {
-	const { data: sessions } = useAcademicSessions();
-	const [sessionId, setSessionId] = useState(null);
+	const { sessionId, setSessionId } = useSelectedSession();
 	const [semester, setSemester] = useState('first');
-
-	useEffect(() => {
-		if (sessions && !sessionId) {
-			const current = sessions.find((s) => s.is_current) ?? sessions[0];
-			if (current) setSessionId(String(current.id));
-		}
-	}, [sessions, sessionId]);
 
 	const { data, isLoading } = useAdminStudentGrades(user?.rawId, {
 		sessionId,

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import PageHeading from '../../components/ui/PageHeading';
 import AcademicSession from '../../sections/student/results/AcademicSession';
 import ResultsTable from '../../sections/student/results/ResultsTable';
 import StudentResultsActions from '../../sections/student/results/StudentResultActions';
-import { useAcademicSessions } from '../../hooks/useAcademicSessions';
+import { useSelectedSession } from '../../hooks/useSelectedSession';
 import { useGrades } from '../../hooks/student/useGrades';
 import { useStudentDashboard } from '../../hooks/student/useStudentDashboard';
 
@@ -14,21 +14,12 @@ const DEGREE_PREFIX = {
 
 export default function ResultsPage() {
 	const { data: dashboard } = useStudentDashboard();
-	const { data: sessions } = useAcademicSessions();
-	const [sessionId, setSessionId] = useState(null);
+	const { sessions, sessionId, setSessionId } = useSelectedSession();
 	const [semester, setSemester] = useState('first');
-
-	// Default to the current session once sessions load
-	useEffect(() => {
-		if (sessions && !sessionId) {
-			const current = sessions.find((s) => s.is_current) ?? sessions[0];
-			if (current) setSessionId(String(current.id));
-		}
-	}, [sessions, sessionId]);
 
 	const { data, isLoading, isError } = useGrades({ sessionId, semester });
 
-	const selectedSession = sessions?.find(
+	const selectedSession = sessions.find(
 		(s) => String(s.id) === String(sessionId),
 	);
 	const semesterLabel =

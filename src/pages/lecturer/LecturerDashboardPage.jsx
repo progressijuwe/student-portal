@@ -1,6 +1,6 @@
 import LecturerAssigned from '../../sections/lecturer/dashboard/LecturerAssigned';
 import LecturerStatCards from '../../sections/lecturer/dashboard/LecturerStatCards';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 
 export default function LecturerDashboardPage() {
 	const { user } = useAuth();

@@ -1,0 +1,10 @@
+dist
+node_modules
+coverage
+package-lock.json
+*.svg
+
+# Hand-authored FullCalendar overrides, kept in the author's compact one-line
+# style. Prettier would expand every single-declaration rule onto three lines,
+# which makes the file harder to scan without changing a single value.
+src/styles/calendar.css

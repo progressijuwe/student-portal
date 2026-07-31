@@ -54,7 +54,7 @@ export default function Enrolled() {
 						</div>
 						<img
 							src={fallbackImages[i % fallbackImages.length]}
-							alt='Course Image'
+							alt=''
 						/>
 					</div>
 				))}

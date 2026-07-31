@@ -1,7 +1,7 @@
-import RegistrationRow from "../../../components/ui/RegistrationRow";
-import RegistrationCard from "../../../components/ui/RegistrationCard";
-import EmptyState from "../../../components/ui/EmptyState";
-import UserTableSkeleton from "../../../components/shared/UserTableSkeleton";
+import RegistrationRow from '../../../components/ui/RegistrationRow';
+import RegistrationCard from '../../../components/ui/RegistrationCard';
+import EmptyState from '../../../components/ui/EmptyState';
+import UserTableSkeleton from '../../../components/shared/UserTableSkeleton';
 
 export default function RegistrationTable({
 	registrations,
@@ -25,14 +25,22 @@ export default function RegistrationTable({
 			{/* Desktop */}
 			<div className='hidden lg:block overflow-x-auto'>
 				<table className='w-full text-sm'>
-					<caption className='sr-only'>Course registration list</caption>
+					<caption className='sr-only'>
+						Course registration list
+					</caption>
 					<thead className='bg-[#F9F9FF] text-left text-xs text-label'>
 						<tr>
 							<th className='py-3 px-3 font-medium'>S/N</th>
-							<th className='py-3 px-3 font-medium'>Student Name</th>
-							<th className='py-3 px-3 font-medium'>Matric Number</th>
+							<th className='py-3 px-3 font-medium'>
+								Student Name
+							</th>
+							<th className='py-3 px-3 font-medium'>
+								Matric Number
+							</th>
 							<th className='py-3 px-3 font-medium'>Level</th>
-							<th className='py-3 px-3 font-medium'>Courses Registered</th>
+							<th className='py-3 px-3 font-medium'>
+								Courses Registered
+							</th>
 							<th className='py-3 px-3 font-medium'>Actions</th>
 						</tr>
 					</thead>

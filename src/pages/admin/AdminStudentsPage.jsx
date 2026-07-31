@@ -28,6 +28,19 @@ const MODAL = {
 	EDIT_SUCCESS: 'edit-success',
 };
 
+/**
+ * Maps a UserResource onto the shape the table renders *and* the edit form
+ * seeds itself from.
+ *
+ * UserForm builds its initial values with `data[field.name]`, so the keys here
+ * must match the field names in `studentFields` exactly. They previously did
+ * not — `department` held a name where the form wanted `department_id`,
+ * `enrollmentYear` where it wanted `entry_year`, and `study_type` and
+ * `faculty_id` were absent entirely, so four fields opened blank.
+ *
+ * The display keys (`department`, `level`, `enrollmentYear`) are kept because
+ * the shared table row and profile drawer read them.
+ */
 function transformStudent(user) {
 	return {
 		id: user.student_id,
@@ -35,10 +48,20 @@ function transformStudent(user) {
 		name: user.name,
 		email: user.email,
 		phone: user.phone,
+		profilePhoto: user.profile_photo_url,
+
+		// Display
 		department: user.department?.name,
 		level: user.level?.replace(' Level', ''),
 		enrollmentYear: user.entry_year ? String(user.entry_year) : '',
-		profilePhoto: user.profile_photo_url,
+
+		// Form values — names must match `studentFields`
+		study_type: user.study_type ?? '',
+		entry_year: user.entry_year ? String(user.entry_year) : '',
+		faculty_id: user.department?.faculty_id
+			? String(user.department.faculty_id)
+			: '',
+		department_id: user.department?.id ? String(user.department.id) : '',
 	};
 }
 
@@ -64,6 +87,10 @@ export default function AdminStudentsPage() {
 		faculty_id: filters.faculty_id || undefined,
 		department_id: filters.department_id || undefined,
 		level: filters.level || undefined,
+		// Was missing: the filter modal wrote entry_year to the URL but it was
+		// never forwarded, so the request was identical and the cached result
+		// came straight back.
+		entry_year: filters.entry_year || undefined,
 	});
 
 	const students = (data?.data ?? []).map(transformStudent);

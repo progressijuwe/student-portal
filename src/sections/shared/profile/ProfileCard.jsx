@@ -42,7 +42,7 @@ export default function ProfileCard({
 					{profilePhoto ? (
 						<img
 							src={profilePhoto}
-							alt='Profile Photo'
+							alt=''
 							className='rounded-full w-25 h-25 lg:w-34 lg:h-34 object-cover border border-brand-orange'
 						/>
 					) : (

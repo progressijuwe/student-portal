@@ -1,113 +1,161 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { useResultsQuery } from "../../hooks/useResultsQuery";
-import { filterResults } from "../../utils/filterResults";
-import ResultsTabs from "../../sections/admin/results/ResultsTabs";
-import ResultsToolbar from "../../sections/admin/results/ResultsToolbar";
-import ResultsTable from "../../sections/admin/results/ResultsTable";
-import Pagination from "../../components/ui/Pagination";
-import EntityPageShell from "../../components/ui/EntityPageShell";
-import { resultsData } from "../../data/resultsData";
+import { useCallback, useMemo, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { useResultsQuery } from '../../hooks/useResultsQuery';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import {
+	useAdminResults,
+	useReviewResults,
+} from '../../hooks/admin/useAdminResults';
+import { getErrorMessage } from '../../utils/getErrorMessage';
+import ResultsTabs from '../../sections/admin/results/ResultsTabs';
+import ResultsToolbar from '../../sections/admin/results/ResultsToolbar';
+import ResultsTable from '../../sections/admin/results/ResultsTable';
+import ResultDetailsModal from '../../sections/admin/modals/ResultDetailsModal';
+import RejectReasonModal from '../../sections/admin/modals/RejectReasonModal';
+import Pagination from '../../components/ui/Pagination';
+import EntityPageShell from '../../components/ui/EntityPageShell';
+import ErrorState from '../../components/ui/ErrorState';
 
-const perPage = 8;
+const TAB_STATUS = {
+	pending: 'pending',
+	approved: 'approved',
+	rejected: 'rejected',
+};
 
 export default function AdminResultsPage() {
 	const { search, page, filters, setSearch, setFilters, setPage } =
 		useResultsQuery();
 
-	const [results, setResults] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [activeTab, setActiveTab] = useState("pending");
-	const [debouncedSearch, setDebouncedSearch] = useState("");
+	const [activeTab, setActiveTab] = useState('pending');
+	const [viewing, setViewing] = useState(null);
+	const [rejecting, setRejecting] = useState(null);
 
-	useEffect(() => {
-		const t = setTimeout(() => setDebouncedSearch(search), 300);
-		return () => clearTimeout(t);
-	}, [search]);
+	const debouncedSearch = useDebouncedValue(search);
 
-	useEffect(() => {
-		setPage(1);
-	}, [
-		debouncedSearch,
-		filters.level,
-		filters.faculty,
-		filters.department,
-		activeTab,
-	]);
-
-	useEffect(() => {
-		setLoading(true);
-		setTimeout(() => {
-			setResults(resultsData);
-			setLoading(false);
-		}, 1000);
-	}, []);
-
-	const counts = useMemo(
+	const params = useMemo(
 		() => ({
-			pending: results.filter((r) => r.status === "pending").length,
-			approved: results.filter((r) => r.status === "approved").length,
-			rejected: results.filter((r) => r.status === "rejected").length,
+			status: TAB_STATUS[activeTab],
+			page,
+			search: debouncedSearch || undefined,
+			level: filters.level || undefined,
+			faculty_id: filters.faculty_id || undefined,
+			department_id: filters.department_id || undefined,
 		}),
-		[results],
+		[activeTab, page, debouncedSearch, filters],
 	);
 
-	const tabFiltered = useMemo(
-		() => results.filter((r) => r.status === activeTab),
-		[results, activeTab],
+	const { data, isPending, isError, error, refetch } =
+		useAdminResults(params);
+	const review = useReviewResults();
+
+	const results = data?.data ?? [];
+	const meta = data?.meta ?? {};
+	const counts = meta.counts ?? { pending: 0, approved: 0, rejected: 0 };
+
+	const handleTabChange = useCallback(
+		(tab) => {
+			setActiveTab(tab);
+			setPage(1);
+		},
+		[setPage],
 	);
 
-	const filtered = useMemo(
-		() => filterResults(tabFiltered, debouncedSearch, filters),
-		[tabFiltered, debouncedSearch, filters],
+	// Approving a row approves every grade in that course's mark sheet at once.
+	const handleApprove = useCallback(
+		(result) =>
+			review.mutate({ gradeIds: result.grade_ids, action: 'approve' }),
+		[review],
 	);
 
-	const totalPages = Math.ceil(filtered.length / perPage);
+	// Rejection needs a reason — the API requires it and the lecturer sees it.
+	const handleReject = useCallback(
+		(rejectionReason) =>
+			review.mutate(
+				{
+					gradeIds: rejecting.grade_ids,
+					action: 'reject',
+					rejectionReason,
+				},
+				{ onSuccess: () => setRejecting(null) },
+			),
+		[review, rejecting],
+	);
 
-	const paginated = useMemo(() => {
-		const start = (page - 1) * perPage;
-		return filtered.slice(start, start + perPage);
-	}, [filtered, page]);
-
-	const handleApprove = useCallback((result) => {
-		setResults((prev) =>
-			prev.map((r) => (r.id === result.id ? { ...r, status: "approved" } : r)),
+	if (isError) {
+		return (
+			<EntityPageShell title='Results Management'>
+				<ErrorState
+					title='Failed to load results'
+					description={getErrorMessage(error)}
+					onRetry={refetch}
+				/>
+			</EntityPageShell>
 		);
-	}, []);
-
-	const handleReject = useCallback((result) => {
-		setResults((prev) =>
-			prev.map((r) => (r.id === result.id ? { ...r, status: "rejected" } : r)),
-		);
-	}, []);
+	}
 
 	return (
 		<EntityPageShell title='Results Management'>
 			<ResultsTabs
 				activeTab={activeTab}
 				counts={counts}
-				onTabChange={setActiveTab}
+				onTabChange={handleTabChange}
 			/>
+
 			<ResultsToolbar
 				search={search}
 				onSearch={setSearch}
 				filters={filters}
 				onFilterChange={setFilters}
 			/>
+
+			{review.isError && !rejecting && (
+				<p role='alert' className='px-4 text-sm text-red-600'>
+					{getErrorMessage(review.error)}
+				</p>
+			)}
+
 			<ResultsTable
-				results={paginated}
-				loading={loading}
-				isPending={activeTab === "pending"}
+				results={results}
+				loading={isPending || review.isPending}
+				isPending={activeTab === 'pending'}
+				onView={setViewing}
 				onApprove={handleApprove}
-				onReject={handleReject}
+				onReject={setRejecting}
 			/>
-			{!loading && totalPages > 1 && (
+
+			{!isPending && meta.last_page > 1 && (
 				<Pagination
-					page={page}
-					total={filtered.length}
-					perPage={perPage}
+					page={meta.current_page}
+					total={meta.total}
+					perPage={meta.per_page}
 					onPageChange={setPage}
 				/>
 			)}
+
+			<AnimatePresence>
+				{viewing && (
+					<ResultDetailsModal
+						offering={viewing}
+						status={TAB_STATUS[activeTab]}
+						onClose={() => setViewing(null)}
+					/>
+				)}
+
+				{rejecting && (
+					<RejectReasonModal
+						title={`Reject ${rejecting.code} results`}
+						description={`${rejecting.students} student result(s) will be returned to ${rejecting.lecturer} for correction.`}
+						isSubmitting={review.isPending}
+						error={
+							review.isError
+								? getErrorMessage(review.error)
+								: null
+						}
+						onConfirm={handleReject}
+						onClose={() => setRejecting(null)}
+					/>
+				)}
+			</AnimatePresence>
 		</EntityPageShell>
 	);
 }

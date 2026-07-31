@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/portal-logo.png';
 import { useLogin } from '../../hooks/useLogin';
 import { getErrorMessage } from '../../utils/getErrorMessage';
@@ -14,6 +14,7 @@ export default function LoginPage() {
 	const [values, setValues] = useState({ email: '', password: '' });
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { mutate, isPending, error } = useLogin();
 
 	const handleChange = (e) => {
@@ -24,8 +25,11 @@ export default function LoginPage() {
 		e.preventDefault();
 		mutate(values, {
 			onSuccess: (data) => {
-				const destination = ROLE_REDIRECTS[data.user.role] ?? '/login';
-				navigate(destination, { replace: true });
+				// ProtectedRoute stashes the attempted URL in location.state.
+				const intended = location.state?.from?.pathname;
+				const fallback = ROLE_REDIRECTS[data.user.role] ?? '/login';
+
+				navigate(intended ?? fallback, { replace: true });
 			},
 		});
 	};
@@ -52,19 +56,39 @@ export default function LoginPage() {
 			>
 				<div className='flex flex-col gap-3'>
 					<div className='flex flex-col gap-7'>
+						<label htmlFor='email' className='sr-only'>
+							Email address
+						</label>
 						<input
+							id='email'
 							type='email'
 							name='email'
 							placeholder='Email'
+							required
+							autoComplete='email'
+							aria-invalid={Boolean(errorMessage)}
+							aria-describedby={
+								errorMessage ? 'login-error' : undefined
+							}
 							value={values.email}
 							onChange={handleChange}
 							className='text-sm placeholder:text-[#808080] bg-brand border-brand focus:border-brand-border rounded-sm px-6 py-3'
 						/>
 						<div className='relative'>
+							<label htmlFor='password' className='sr-only'>
+								Password
+							</label>
 							<input
+								id='password'
 								type={showPassword ? 'text' : 'password'}
 								name='password'
 								placeholder='Password'
+								required
+								autoComplete='current-password'
+								aria-invalid={Boolean(errorMessage)}
+								aria-describedby={
+									errorMessage ? 'login-error' : undefined
+								}
 								value={values.password}
 								onChange={handleChange}
 								className='w-full text-sm placeholder:text-[#808080] bg-brand border-brand focus:border-brand-border rounded-sm px-6 py-3 pr-11'
@@ -84,13 +108,25 @@ export default function LoginPage() {
 						</div>
 					</div>
 					{errorMessage && (
-						<p className='text-red-500 text-xs text-center'>
+						<p
+							id='login-error'
+							role='alert'
+							className='text-red-500 text-xs text-center'
+						>
 							{errorMessage}
 						</p>
 					)}
+					{/*
+						Password reset is not implemented end to end yet � there is
+						no /auth/forgot-password route on the API. Rendering this
+						as disabled with an explanation is honest; a button that
+						silently does nothing is not.
+					*/}
 					<button
 						type='button'
-						className='text-right text-sm font-semibold text-brand-orange'
+						disabled
+						title='Password reset is not available yet � please contact your department administrator.'
+						className='text-right text-sm font-semibold text-brand-orange disabled:cursor-not-allowed disabled:opacity-50'
 					>
 						Forgot Password?
 					</button>

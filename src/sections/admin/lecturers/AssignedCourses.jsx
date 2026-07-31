@@ -1,10 +1,3 @@
-
-
-export default function AssignedCourses(){
-
-    return(
-        <div>
-            
-        </div>
-    )
+export default function AssignedCourses() {
+	return <div></div>;
 }
