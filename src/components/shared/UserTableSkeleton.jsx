@@ -1,36 +1,50 @@
 export default function UserTableSkeleton({ cols = 7, rows = 6, cards = 4 }) {
-    return (
-        <section className="w-full animate-pulse">
-            <div className="hidden lg:block">
-                <div className="border border-border rounded-[10px] overflow-hidden">
-                <div className={`bg-[#F9F9FF] grid grid-cols-${cols} gap-2 p-3`}>
-                    {Array.from({ length: cols }).map((_, i) => (
-                    <div key={i} className="h-3 bg-gray-200 rounded w-3/4" />
-                    ))}
-                </div>
-                {Array.from({ length: rows }).map((_, i) => (
-                    <div key={i} className={`grid grid-cols-${cols} gap-2 p-3 border-t`}>
-                    {Array.from({ length: cols }).map((_, j) => (
-                        <div key={j} className="h-3 bg-gray-200 rounded w-full" />
-                    ))}
-                    </div>
-                ))}
-                </div>
-            </div>
+	return (
+		<section className='w-full animate-pulse'>
+			<div className='hidden lg:block'>
+				<div className='border border-border rounded-[10px] overflow-hidden'>
+					<div
+						className={`bg-[#F9F9FF] grid grid-cols-${cols} gap-2 p-3`}
+					>
+						{Array.from({ length: cols }).map((_, i) => (
+							<div
+								key={i}
+								className='h-3 bg-gray-200 rounded w-3/4'
+							/>
+						))}
+					</div>
+					{Array.from({ length: rows }).map((_, i) => (
+						<div
+							key={i}
+							className={`grid grid-cols-${cols} gap-2 p-3 border-t`}
+						>
+							{Array.from({ length: cols }).map((_, j) => (
+								<div
+									key={j}
+									className='h-3 bg-gray-200 rounded w-full'
+								/>
+							))}
+						</div>
+					))}
+				</div>
+			</div>
 
-            <div className="flex flex-col gap-4 px-4 lg:hidden">
-                {Array.from({ length: cards }).map((_, i) => (
-                <div key={i} className="border border-border rounded-[10px] p-4 flex flex-col gap-3">
-                    <div className="h-4 bg-gray-200 rounded w-1/2" />
-                    <div className="h-3 bg-gray-200 rounded w-1/3" />
-                    <div className="flex flex-col gap-2">
-                    <div className="h-3 bg-gray-200 rounded w-full" />
-                    <div className="h-3 bg-gray-200 rounded w-5/6" />
-                    <div className="h-3 bg-gray-200 rounded w-4/6" />
-                    </div>
-                </div>
-                ))}
-            </div>
-        </section>
-    )
+			<div className='flex flex-col gap-4 px-4 lg:hidden'>
+				{Array.from({ length: cards }).map((_, i) => (
+					<div
+						key={i}
+						className='border border-border rounded-[10px] p-4 flex flex-col gap-3'
+					>
+						<div className='h-4 bg-gray-200 rounded w-1/2' />
+						<div className='h-3 bg-gray-200 rounded w-1/3' />
+						<div className='flex flex-col gap-2'>
+							<div className='h-3 bg-gray-200 rounded w-full' />
+							<div className='h-3 bg-gray-200 rounded w-5/6' />
+							<div className='h-3 bg-gray-200 rounded w-4/6' />
+						</div>
+					</div>
+				))}
+			</div>
+		</section>
+	);
 }

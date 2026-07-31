@@ -1,12 +1,12 @@
-import PendingIcon from "../../../assets/svg/clock.svg?react";
-import ApprovedIcon from "../../../assets/svg/good.svg?react";
-import RejectedIcon from "../../../assets/svg/close.svg?react";
+import PendingIcon from '../../../assets/svg/clock.svg?react';
+import ApprovedIcon from '../../../assets/svg/good.svg?react';
+import RejectedIcon from '../../../assets/svg/close.svg?react';
 
 export default function RegistrationTabs({ activeTab, counts, onTabChange }) {
 	const tabs = [
-		{ key: "pending", label: "Pending Approval" },
-		{ key: "approved", label: "Approved" },
-		{ key: "rejected", label: "Rejected" },
+		{ key: 'pending', label: 'Pending Approval' },
+		{ key: 'approved', label: 'Approved' },
+		{ key: 'rejected', label: 'Rejected' },
 	];
 
 	return (
@@ -34,16 +34,16 @@ export default function RegistrationTabs({ activeTab, counts, onTabChange }) {
 						onClick={() => onTabChange(tab.key)}
 						className={`w-full flex justify-center items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
 							activeTab === tab.key
-								? "border-brand-red text-brand-red"
-								: "border-transparent text-label hover:text-black"
+								? 'border-brand-red text-brand-red'
+								: 'border-transparent text-label hover:text-black'
 						}`}
 					>
 						{tab.label}
 						<span
 							className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
 								activeTab === tab.key
-									? "bg-brand-red text-white"
-									: "bg-gray-100 text-label"
+									? 'bg-brand-red text-white'
+									: 'bg-gray-100 text-label'
 							}`}
 						>
 							{counts[tab.key] ?? 0}

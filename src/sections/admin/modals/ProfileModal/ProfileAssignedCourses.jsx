@@ -1,18 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useAcademicSessions } from '../../../../hooks/useAcademicSessions';
+import { useSelectedSession } from '../../../../hooks/useSelectedSession';
 import { useAdminLecturerCourses } from '../../../../hooks/admin/useAdminLecturerCourses';
 import { Button } from '../../../../components/ui/Button';
 
 export default function ProfileAssignedCourses({ user, onViewResults }) {
-	const { data: sessions } = useAcademicSessions();
-	const [sessionId, setSessionId] = useState(null);
-
-	useEffect(() => {
-		if (sessions && !sessionId) {
-			const current = sessions.find((s) => s.is_current) ?? sessions[0];
-			if (current) setSessionId(String(current.id));
-		}
-	}, [sessions, sessionId]);
+	const { sessions, sessionId, setSessionId } = useSelectedSession();
 
 	const { data, isLoading } = useAdminLecturerCourses(user?.rawId, {
 		sessionId,
@@ -35,7 +26,7 @@ export default function ProfileAssignedCourses({ user, onViewResults }) {
 					onChange={(e) => setSessionId(e.target.value)}
 					className='bg-white border border-brand-orange rounded-[10px] p-2.5 text-xs text-black'
 				>
-					{sessions?.map((session) => (
+					{sessions.map((session) => (
 						<option key={session.id} value={session.id}>
 							{session.name}
 						</option>

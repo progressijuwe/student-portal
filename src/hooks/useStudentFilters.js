@@ -1,17 +1,17 @@
-import { useStudentQuery } from "./useStudentQuery"
+import { useStudentQuery } from './useStudentQuery';
 
 export function useStudentFilters() {
-    const { search, page, filters, setSearch, setFilters, setPage } =
-        useStudentQuery()
+	const { search, page, filters, setSearch, setFilters, setPage } =
+		useStudentQuery();
 
-    return {
-        search,
-        page,
-        setSearch,
-        setFilters,
-        setPage,
+	return {
+		search,
+		page,
+		setSearch,
+		setFilters,
+		setPage,
 
-        searchQuery: search || "",
-        filters
-    }
+		searchQuery: search || '',
+		filters,
+	};
 }

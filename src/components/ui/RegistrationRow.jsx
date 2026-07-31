@@ -1,6 +1,6 @@
-import ViewIcon from "../../assets/svg/view.svg?react";
-import CheckIcon from "../../assets/svg/check.svg?react";
-import CloseIcon from "../../assets/svg/close.svg?react";
+import ViewIcon from '../../assets/svg/view.svg?react';
+import CheckIcon from '../../assets/svg/check.svg?react';
+import CloseIcon from '../../assets/svg/close.svg?react';
 
 export default function RegistrationRow({
 	registration,

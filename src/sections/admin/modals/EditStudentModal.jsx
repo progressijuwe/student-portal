@@ -32,4 +32,3 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
 		</Modal>
 	);
 }
-s;

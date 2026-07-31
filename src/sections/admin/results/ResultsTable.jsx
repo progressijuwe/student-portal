@@ -1,7 +1,7 @@
-import ResultRow from "../../../components/ui/ResultRow";
-import ResultCard from "../../../components/ui/ResultCard";
-import EmptyState from "../../../components/ui/EmptyState";
-import UserTableSkeleton from "../../../components/shared/UserTableSkeleton";
+import ResultRow from '../../../components/ui/ResultRow';
+import ResultCard from '../../../components/ui/ResultCard';
+import EmptyState from '../../../components/ui/EmptyState';
+import UserTableSkeleton from '../../../components/shared/UserTableSkeleton';
 
 export default function ResultsTable({
 	results,
@@ -29,7 +29,9 @@ export default function ResultsTable({
 					<thead className='bg-[#F9F9FF] text-left text-xs text-label'>
 						<tr>
 							<th className='py-3 px-3 font-medium'>S/N</th>
-							<th className='py-3 px-3 font-medium'>Course Details</th>
+							<th className='py-3 px-3 font-medium'>
+								Course Details
+							</th>
 							<th className='py-3 px-3 font-medium'>Lecturer</th>
 							<th className='py-3 px-3 font-medium'>Students</th>
 							<th className='py-3 px-3 font-medium'>Avg Score</th>

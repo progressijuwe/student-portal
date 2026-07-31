@@ -1,5 +1,5 @@
-import CheckIcon from "../../assets/svg/check.svg?react";
-import CloseIcon from "../../assets/svg/close.svg?react";
+import CheckIcon from '../../assets/svg/check.svg?react';
+import CloseIcon from '../../assets/svg/close.svg?react';
 
 export default function ResultCard({
 	result,
@@ -12,7 +12,9 @@ export default function ResultCard({
 		<article className='border border-border rounded-[10px] p-4 flex flex-col gap-3 bg-white'>
 			<div className='flex items-start justify-between'>
 				<div>
-					<p className='font-semibold text-brand-red text-sm'>{result.code}</p>
+					<p className='font-semibold text-brand-red text-sm'>
+						{result.code}
+					</p>
 					<p className='text-label text-xs'>{result.title}</p>
 				</div>
 				<span className='font-semibold text-brand-red text-sm'>

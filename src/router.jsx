@@ -1,47 +1,91 @@
-import { createBrowserRouter } from 'react-router-dom';
-import DashboardPage from './pages/student/DashboardPage';
-import ProfilePage from './pages/shared/ProfilePage';
-import ResultsPage from './pages/student/ResultsPage';
-import TimetablePage from './pages/student/TimetablePage';
-import StudentLayout from './layouts/StudentLayout';
-import LecturerLayout from './layouts/LecturerLayout';
-import LecturerDashboardPage from './pages/lecturer/LecturerDashboardPage';
-import LecturerCoursesPage from './pages/lecturer/LecturerCoursesPage';
-import LecturerResultsPage from './pages/lecturer/LecturerResultsPage';
-import AdminLayout from './layouts/AdminLayout';
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminStudentsPage from './pages/admin/AdminStudentsPage';
-import AdminLecturersPage from './pages/admin/AdminLecturersPage';
-import AdminCoursesPage from './pages/admin/AdminCoursesPage';
-import AdminCourseRegistrationsPage from './pages/admin/AdminCourseRegistrationsPage';
-import AdminResultsPage from './pages/admin/AdminResultsPage';
-import CourseRegistrationPage from './pages/student/CourseRegistrationPage';
-import LoginPage from './pages/shared/LoginPage';
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import ProtectedRoute from './routes/ProtectedRoutes';
+import RouteError from './components/ui/RouteError';
+import PageFallback from './components/ui/PageFallback';
+
+/*
+ * Every page is code-split.
+ *
+ * Previously all fifteen were statically imported, so a student downloaded the
+ * entire admin bundle — including FullCalendar, Chart.js and the Google Maps
+ * SDK — before their dashboard could paint.
+ */
+const LoginPage = lazy(() => import('./pages/shared/LoginPage'));
+const ProfilePage = lazy(() => import('./pages/shared/ProfilePage'));
+
+const StudentLayout = lazy(() => import('./layouts/StudentLayout'));
+const DashboardPage = lazy(() => import('./pages/student/DashboardPage'));
+const ResultsPage = lazy(() => import('./pages/student/ResultsPage'));
+const TimetablePage = lazy(() => import('./pages/student/TimetablePage'));
+const CourseRegistrationPage = lazy(
+	() => import('./pages/student/CourseRegistrationPage'),
+);
+
+const LecturerLayout = lazy(() => import('./layouts/LecturerLayout'));
+const LecturerDashboardPage = lazy(
+	() => import('./pages/lecturer/LecturerDashboardPage'),
+);
+const LecturerCoursesPage = lazy(
+	() => import('./pages/lecturer/LecturerCoursesPage'),
+);
+const LecturerResultsPage = lazy(
+	() => import('./pages/lecturer/LecturerResultsPage'),
+);
+
+const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
+const AdminDashboardPage = lazy(
+	() => import('./pages/admin/AdminDashboardPage'),
+);
+const AdminStudentsPage = lazy(() => import('./pages/admin/AdminStudentsPage'));
+const AdminLecturersPage = lazy(
+	() => import('./pages/admin/AdminLecturersPage'),
+);
+const AdminCoursesPage = lazy(() => import('./pages/admin/AdminCoursesPage'));
+const AdminCourseRegistrationsPage = lazy(
+	() => import('./pages/admin/AdminCourseRegistrationsPage'),
+);
+const AdminResultsPage = lazy(() => import('./pages/admin/AdminResultsPage'));
+
+const NotFoundPage = lazy(() => import('./pages/shared/NotFoundPage'));
+
+/** Wraps a lazily loaded element in the shared skeleton fallback. */
+const page = (Component) => (
+	<Suspense fallback={<PageFallback />}>
+		<Component />
+	</Suspense>
+);
 
 export const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <LoginPage />,
+		element: <Navigate to='/login' replace />,
+		errorElement: <RouteError />,
 	},
 	{
 		path: '/login',
-		element: <LoginPage />,
+		element: page(LoginPage),
+		errorElement: <RouteError />,
 	},
 	{
 		element: <ProtectedRoute allowedRoles={['student']} />,
+		errorElement: <RouteError />,
 		children: [
 			{
 				path: '/student',
-				element: <StudentLayout />,
+				element: page(StudentLayout),
 				children: [
-					{ path: 'dashboard', element: <DashboardPage /> },
-					{ path: 'profile', element: <ProfilePage /> },
-					{ path: 'results', element: <ResultsPage /> },
-					{ path: 'timetable', element: <TimetablePage /> },
+					{
+						index: true,
+						element: <Navigate to='dashboard' replace />,
+					},
+					{ path: 'dashboard', element: page(DashboardPage) },
+					{ path: 'profile', element: page(ProfilePage) },
+					{ path: 'results', element: page(ResultsPage) },
+					{ path: 'timetable', element: page(TimetablePage) },
 					{
 						path: 'course-registration',
-						element: <CourseRegistrationPage />,
+						element: page(CourseRegistrationPage),
 					},
 				],
 			},
@@ -49,43 +93,59 @@ export const router = createBrowserRouter([
 	},
 	{
 		element: <ProtectedRoute allowedRoles={['lecturer']} />,
+		errorElement: <RouteError />,
 		children: [
 			{
 				path: '/lecturer',
-				element: <LecturerLayout />,
+				element: page(LecturerLayout),
 				children: [
-					{ path: 'dashboard', element: <LecturerDashboardPage /> },
+					{
+						index: true,
+						element: <Navigate to='dashboard' replace />,
+					},
+					{ path: 'dashboard', element: page(LecturerDashboardPage) },
 					{
 						path: 'course-details',
-						element: <LecturerCoursesPage />,
+						element: page(LecturerCoursesPage),
 					},
 					{
 						path: 'results-management',
-						element: <LecturerResultsPage />,
+						element: page(LecturerResultsPage),
 					},
-					{ path: 'profile', element: <ProfilePage /> },
+					{ path: 'profile', element: page(ProfilePage) },
 				],
 			},
 		],
 	},
 	{
 		element: <ProtectedRoute allowedRoles={['admin']} />,
+		errorElement: <RouteError />,
 		children: [
 			{
 				path: '/admin',
-				element: <AdminLayout />,
+				element: page(AdminLayout),
 				children: [
-					{ path: 'dashboard', element: <AdminDashboardPage /> },
-					{ path: 'students', element: <AdminStudentsPage /> },
-					{ path: 'lecturers', element: <AdminLecturersPage /> },
-					{ path: 'courses', element: <AdminCoursesPage /> },
+					{
+						index: true,
+						element: <Navigate to='dashboard' replace />,
+					},
+					{ path: 'dashboard', element: page(AdminDashboardPage) },
+					{ path: 'students', element: page(AdminStudentsPage) },
+					{ path: 'lecturers', element: page(AdminLecturersPage) },
+					{ path: 'courses', element: page(AdminCoursesPage) },
 					{
 						path: 'courses-registrations',
-						element: <AdminCourseRegistrationsPage />,
+						element: page(AdminCourseRegistrationsPage),
 					},
-					{ path: 'results', element: <AdminResultsPage /> },
+					{ path: 'results', element: page(AdminResultsPage) },
 				],
 			},
 		],
+	},
+	{
+		// Catch-all. Without this an unknown URL rendered a blank page.
+		path: '*',
+		element: page(NotFoundPage),
+		errorElement: <RouteError />,
 	},
 ]);

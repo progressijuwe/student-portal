@@ -1,137 +1,147 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { AnimatePresence } from "framer-motion";
-import { useCourseRegistrationQuery } from "../../hooks/useCourseRegistrationQuery";
-import { filterRegistrations } from "../../utils/filterRegistrations";
-import RegistrationTabs from "../../sections/admin/registrations/RegistrationTabs";
-import RegistrationToolbar from "../../sections/admin/registrations/RegistrationToolbar";
-import RegistrationTable from "../../sections/admin/registrations/RegistrationTable";
-import RegistrationDetailsModal from "../../sections/admin/modals/RegistrationDetailsModal";
-import AddSuccessModal from "../../sections/admin/modals/AddSuccessModal";
-import Pagination from "../../components/ui/Pagination";
-import EntityPageShell from "../../components/ui/EntityPageShell";
-import { courseRegistrationsData } from "../../data/courseRegistrationsData";
+import { useCallback, useMemo, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { useCourseRegistrationQuery } from '../../hooks/useCourseRegistrationQuery';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import {
+	useAdminRegistrations,
+	useReviewRegistrations,
+} from '../../hooks/admin/useAdminRegistrations';
+import { getErrorMessage } from '../../utils/getErrorMessage';
+import RegistrationTabs from '../../sections/admin/registrations/RegistrationTabs';
+import RegistrationToolbar from '../../sections/admin/registrations/RegistrationToolbar';
+import RegistrationTable from '../../sections/admin/registrations/RegistrationTable';
+import RegistrationDetailsModal from '../../sections/admin/modals/RegistrationDetailsModal';
+import Pagination from '../../components/ui/Pagination';
+import ErrorState from '../../components/ui/ErrorState';
 
-const perPage = 8;
+/**
+ * Tab label -> the enrollment status the API filters on. 'approved' is stored
+ * as 'active': a registration that has been approved is simply an active
+ * enrollment.
+ */
+const TAB_STATUS = {
+	pending: 'pending',
+	approved: 'active',
+	rejected: 'rejected',
+};
 
 export default function AdminCourseRegistrationsPage() {
 	const { search, page, filters, setSearch, setFilters, setPage } =
 		useCourseRegistrationQuery();
 
-	const [registrations, setRegistrations] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [activeTab, setActiveTab] = useState("pending");
-	const [modal, setModal] = useState({ type: null, data: null });
-	const [debouncedSearch, setDebouncedSearch] = useState("");
+	const [activeTab, setActiveTab] = useState('pending');
+	const [selected, setSelected] = useState(null);
 
-	useEffect(() => {
-		const t = setTimeout(() => setDebouncedSearch(search), 300);
-		return () => clearTimeout(t);
-	}, [search]);
+	const debouncedSearch = useDebouncedValue(search);
 
-	useEffect(() => {
-		setLoading(true);
-		setTimeout(() => {
-			setRegistrations(courseRegistrationsData);
-			setLoading(false);
-		}, 1000);
-	}, []);
-
-	useEffect(() => {
-		setPage(1);
-	}, [
-		debouncedSearch,
-		filters.level,
-		filters.faculty,
-		filters.department,
-		activeTab,
-	]);
-
-	const counts = useMemo(
+	const params = useMemo(
 		() => ({
-			pending: registrations.filter((r) => r.status === "pending").length,
-			approved: registrations.filter((r) => r.status === "approved").length,
-			rejected: registrations.filter((r) => r.status === "rejected").length,
+			status: TAB_STATUS[activeTab],
+			page,
+			search: debouncedSearch || undefined,
+			level: filters.level || undefined,
+			faculty_id: filters.faculty_id || undefined,
+			department_id: filters.department_id || undefined,
 		}),
-		[registrations],
+		[activeTab, page, debouncedSearch, filters],
 	);
 
-	const tabFiltered = useMemo(
-		() => registrations.filter((r) => r.status === activeTab),
-		[registrations, activeTab],
+	const { data, isPending, isError, error, refetch } =
+		useAdminRegistrations(params);
+	const review = useReviewRegistrations();
+
+	const registrations = data?.data ?? [];
+	const meta = data?.meta ?? {};
+	const counts = meta.counts ?? { pending: 0, approved: 0, rejected: 0 };
+
+	const handleTabChange = useCallback(
+		(tab) => {
+			setActiveTab(tab);
+			setPage(1);
+		},
+		[setPage],
 	);
 
-	const filtered = useMemo(
-		() => filterRegistrations(tabFiltered, debouncedSearch, filters),
-		[tabFiltered, debouncedSearch, filters],
+	// Approving sends every enrollment id in the student's submission, so the
+	// whole registration commits or none of it does.
+	const handleReview = useCallback(
+		(registration, action) =>
+			review.mutate({
+				enrollmentIds: registration.enrollment_ids,
+				action,
+			}),
+		[review],
 	);
 
-	const totalPages = Math.ceil(filtered.length / perPage);
-
-	const paginated = useMemo(() => {
-		const start = (page - 1) * perPage;
-		return filtered.slice(start, start + perPage);
-	}, [filtered, page]);
-
-	const handleApprove = useCallback((reg) => {
-		setRegistrations((prev) =>
-			prev.map((r) => (r.id === reg.id ? { ...r, status: "approved" } : r)),
+	if (isError) {
+		return (
+			<div className='flex flex-col gap-5 px-5 py-8 lg:px-8 lg:py-6'>
+				<h2 className='text-xl font-semibold lg:text-[30px]'>
+					Course Registration Management
+				</h2>
+				<ErrorState
+					title='Failed to load registrations'
+					description={getErrorMessage(error)}
+					onRetry={refetch}
+				/>
+			</div>
 		);
-	}, []);
-
-	const handleReject = useCallback((reg) => {
-		setRegistrations((prev) =>
-			prev.map((r) => (r.id === reg.id ? { ...r, status: "rejected" } : r)),
-		);
-	}, []);
-
-	const handleView = useCallback(
-		(reg) => setModal({ type: "view", data: reg }),
-		[],
-	);
-	const closeModal = useCallback(
-		() => setModal({ type: null, data: null }),
-		[],
-	);
+	}
 
 	return (
-		<div className='flex flex-col gap-5 lg:py-6 py-8 lg:px-8 px-5'>
-			<h2 className='text-xl lg:text-[30px] font-semibold'>
+		<div className='flex flex-col gap-5 px-5 py-8 lg:px-8 lg:py-6'>
+			<h2 className='text-xl font-semibold lg:text-[30px]'>
 				Course Registration Management
 			</h2>
-			<div className='flex flex-col gap-4 lg:gap-3 w-full border lg:border-0 border-border lg:bg-transparent bg-white rounded-[10px]'>
+
+			<div className='flex w-full flex-col gap-4 rounded-[10px] border border-border bg-white lg:gap-3 lg:border-0 lg:bg-transparent'>
 				<RegistrationTabs
 					activeTab={activeTab}
 					counts={counts}
-					onTabChange={setActiveTab}
+					onTabChange={handleTabChange}
 				/>
+
 				<RegistrationToolbar
 					search={search}
 					onSearch={setSearch}
 					filters={filters}
 					onFilterChange={setFilters}
 				/>
+
+				{review.isError && (
+					<p role='alert' className='px-4 text-sm text-red-600'>
+						{getErrorMessage(review.error)}
+					</p>
+				)}
+
 				<RegistrationTable
-					registrations={paginated}
-					loading={loading}
-					isPending={activeTab === "pending"}
-					onView={handleView}
-					onApprove={handleApprove}
-					onReject={handleReject}
+					registrations={registrations}
+					loading={isPending || review.isPending}
+					isPending={activeTab === 'pending'}
+					onView={setSelected}
+					onApprove={(registration) =>
+						handleReview(registration, 'approve')
+					}
+					onReject={(registration) =>
+						handleReview(registration, 'reject')
+					}
 				/>
-				{!loading && totalPages > 1 && (
+
+				{!isPending && meta.last_page > 1 && (
 					<Pagination
-						page={page}
-						total={filtered.length}
-						perPage={perPage}
+						page={meta.current_page}
+						total={meta.total}
+						perPage={meta.per_page}
 						onPageChange={setPage}
 						label={`${activeTab} approval`}
 					/>
 				)}
+
 				<AnimatePresence>
-					{modal.type === "view" && (
+					{selected && (
 						<RegistrationDetailsModal
-							registration={modal.data}
-							onClose={closeModal}
+							registration={selected}
+							onClose={() => setSelected(null)}
 						/>
 					)}
 				</AnimatePresence>

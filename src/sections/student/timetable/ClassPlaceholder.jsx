@@ -8,7 +8,7 @@ export default function ClassPlaceholder({ room, building }) {
 		<div className='flex flex-col w-full max-w-md border border-[#6161613B] rounded-[10px]'>
 			<img
 				src={Map}
-				alt='Map image'
+				alt=''
 				className='h-70.5 md:h-92 w-full object-cover rounded-[10px]'
 			/>
 			<div className='py-4 px-6 flex flex-col gap-1'>

@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export function useIsDesktop() {
-    const getMatch = () =>
-        typeof window !== "undefined" &&
-        window.matchMedia("(min-width: 1024px)").matches;
+	const getMatch = () =>
+		typeof window !== 'undefined' &&
+		window.matchMedia('(min-width: 1024px)').matches;
 
-    const [isDesktop, setIsDesktop] = useState(getMatch);
+	const [isDesktop, setIsDesktop] = useState(getMatch);
 
-    useEffect(() => {
-        const mq = window.matchMedia("(min-width: 1024px)");
+	useEffect(() => {
+		const mq = window.matchMedia('(min-width: 1024px)');
 
-        const handler = (e) => setIsDesktop(e.matches);
+		const handler = (e) => setIsDesktop(e.matches);
 
-        mq.addEventListener("change", handler);
+		mq.addEventListener('change', handler);
 
-        return () => mq.removeEventListener("change", handler);
-    }, []);
+		return () => mq.removeEventListener('change', handler);
+	}, []);
 
-    return isDesktop;
+	return isDesktop;
 }

@@ -1,9 +1,12 @@
-import Modal from "../../../components/ui/Modal";
+import Modal from '../../../components/ui/Modal';
 
 export default function RegistrationDetailsModal({ registration, onClose }) {
 	if (!registration) return null;
 
-	const totalUnits = registration.courses.reduce((sum, c) => sum + c.units, 0);
+	const totalUnits = registration.courses.reduce(
+		(sum, c) => sum + c.units,
+		0,
+	);
 
 	return (
 		<Modal
@@ -27,12 +30,16 @@ export default function RegistrationDetailsModal({ registration, onClose }) {
 							className='flex items-center justify-between py-3'
 						>
 							<div className='flex items-center gap-3'>
-								<span className='text-xs text-label w-5'>{index + 1}</span>
+								<span className='text-xs text-label w-5'>
+									{index + 1}
+								</span>
 								<div className='flex flex-col gap-0.5'>
 									<span className='text-sm font-semibold text-brand-red'>
 										{course.code}
 									</span>
-									<span className='text-sm text-black'>{course.title}</span>
+									<span className='text-sm text-black'>
+										{course.title}
+									</span>
 								</div>
 							</div>
 							<span className='text-xs text-label shrink-0'>

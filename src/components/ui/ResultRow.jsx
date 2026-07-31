@@ -1,5 +1,5 @@
-import CheckIcon from "../../assets/svg/check.svg?react";
-import CloseIcon from "../../assets/svg/close.svg?react";
+import CheckIcon from '../../assets/svg/check.svg?react';
+import CloseIcon from '../../assets/svg/close.svg?react';
 
 export default function ResultRow({
 	result,

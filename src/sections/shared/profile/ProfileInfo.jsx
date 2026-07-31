@@ -55,18 +55,18 @@ export default function ProfileInfo({
 
 				<div className='bg-white w-full p-5 lg:px-8 grid grid-cols-1 sm:grid-cols-2 gap-5'>
 					<div className='flex flex-col gap-1 text-xs lg:text-sm sm:col-span-2'>
-						<label className='uppercase text-label font-medium'>
+						<span className='uppercase text-label font-medium'>
 							full name
-						</label>
+						</span>
 						<p className='text-black font-semibold'>
 							{user.prefix ? `${user.prefix} ` : ''}
 							{user.name}
 						</p>
 					</div>
 					<div className='flex flex-col gap-1 text-xs lg:text-sm sm:col-span-2'>
-						<label className='uppercase text-label font-medium'>
+						<span className='uppercase text-label font-medium'>
 							school email
-						</label>
+						</span>
 						<p className='text-black font-semibold'>{user.email}</p>
 					</div>
 					{fields.map((field) => (

@@ -1,5 +1,5 @@
-import CheckIcon from "../../assets/svg/check.svg?react";
-import CloseIcon from "../../assets/svg/close.svg?react";
+import CheckIcon from '../../assets/svg/check.svg?react';
+import CloseIcon from '../../assets/svg/close.svg?react';
 
 export default function RegistrationCard({
 	registration,
@@ -14,7 +14,9 @@ export default function RegistrationCard({
 				<h3 className='font-semibold text-black text-sm'>
 					{registration.name}
 				</h3>
-				<p className='text-xs font-medium text-brand-red'>{registration.id}</p>
+				<p className='text-xs font-medium text-brand-red'>
+					{registration.id}
+				</p>
 			</div>
 
 			<div className='flex gap-6 text-xs text-label'>

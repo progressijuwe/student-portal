@@ -1,9 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
 @import 'tailwindcss';
 
+/*
+ * Inter is self-hosted via @fontsource-variable/inter (imported in main.jsx)
+ * rather than @import'ed from fonts.googleapis.com. The Google Fonts import was
+ * render-blocking, cost an extra DNS + TLS round trip on every page load, and
+ * made a third-party request from every user's browser — which also forced
+ * font-src to allow that origin in the CSP.
+ */
+
 @theme {
-	--font-body: 'Inter', sans-serif;
+	--font-body: 'Inter Variable', 'Inter', sans-serif;
 
 	--color-brand: #ffe9db;
 	--color-brand-border: #f54900;
@@ -23,12 +29,29 @@
 
 	--color-body: #4b4b4b;
 }
+
 @layer base {
+	/*
+	 * Inputs keep their borderless look, but focus must stay visible.
+	 *
+	 * The previous rule was a blanket `outline: none` on every input and select
+	 * with nothing put back, which removed the keyboard focus indicator across
+	 * the whole application — a WCAG 2.4.7 failure. :focus-visible only shows
+	 * the ring for keyboard users, so the mouse experience is unchanged.
+	 */
 	input,
-	select {
-		outline: none;
+	select,
+	textarea {
 		border: none;
+		outline: none;
 	}
+
+	:where(input, select, textarea, button, a, [tabindex]):focus-visible {
+		outline: 2px solid var(--color-brand-border);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+
 	input[type='date']::-webkit-calendar-picker-indicator {
 		opacity: 1;
 		display: block;
@@ -40,9 +63,26 @@
 		position: relative;
 	}
 }
+
 html {
 	scroll-behavior: smooth;
 }
+
 button {
 	cursor: pointer;
+}
+
+/* Respect users who have asked their OS to reduce motion. */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
 }

@@ -1,11 +1,11 @@
-import ClockIcon from "../../../assets/svg/clock.svg?react";
-import ApprovedIcon from "../../../assets/svg/approved.svg?react";
-import RejectedIcon from "../../../assets/svg/close.svg?react";
+import ClockIcon from '../../../assets/svg/clock.svg?react';
+import ApprovedIcon from '../../../assets/svg/approved.svg?react';
+import RejectedIcon from '../../../assets/svg/close.svg?react';
 
 const tabs = [
-	{ key: "pending", label: "Pending Approval", Icon: ClockIcon },
-	{ key: "approved", label: "Approved", Icon: ApprovedIcon },
-	{ key: "rejected", label: "Rejected", Icon: RejectedIcon },
+	{ key: 'pending', label: 'Pending Approval', Icon: ClockIcon },
+	{ key: 'approved', label: 'Approved', Icon: ApprovedIcon },
+	{ key: 'rejected', label: 'Rejected', Icon: RejectedIcon },
 ];
 
 export default function ResultsTabs({ activeTab, counts, onTabChange }) {
@@ -34,8 +34,8 @@ export default function ResultsTabs({ activeTab, counts, onTabChange }) {
 						onClick={() => onTabChange(tab.key)}
 						className={`w-full flex justify-center items-center gap-2 px-6 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
 							activeTab === tab.key
-								? "border-brand-red text-brand-red"
-								: "border-transparent text-label hover:text-black"
+								? 'border-brand-red text-brand-red'
+								: 'border-transparent text-label hover:text-black'
 						}`}
 					>
 						<tab.Icon className='size-4' aria-hidden='true' />
@@ -43,8 +43,8 @@ export default function ResultsTabs({ activeTab, counts, onTabChange }) {
 						<span
 							className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
 								activeTab === tab.key
-									? "bg-brand-red text-white"
-									: "bg-gray-100 text-label"
+									? 'bg-brand-red text-white'
+									: 'bg-gray-100 text-label'
 							}`}
 						>
 							{counts[tab.key] ?? 0}

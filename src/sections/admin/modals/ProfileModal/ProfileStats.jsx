@@ -1,4 +1,3 @@
-import { departmentCodes } from '../../../../constants/departments';
 import { useUserSummary } from '../../../../hooks/admin/useUserSummary';
 
 const STATS_CONFIG = {

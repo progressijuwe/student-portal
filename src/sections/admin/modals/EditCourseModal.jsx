@@ -1,66 +1,123 @@
-import Modal from "../../../components/ui/Modal";
-import { Button } from "../../../components/ui/Button";
-import { useState, useEffect } from "react";
-import { courseFields } from "../../../constants/courseFields";
+import { useState } from 'react';
+import Modal from '../../../components/ui/Modal';
+import { Button } from '../../../components/ui/Button';
+import { useDepartments } from '../../../hooks/useDepartments';
+import { useUpdateCourse } from '../../../hooks/admin/useAdminCourses';
+import { getErrorMessage } from '../../../utils/getErrorMessage';
+
+const LEVELS = ['100', '200', '300', '400', '500'];
+const SEMESTERS = [
+	{ value: 'first', label: 'First' },
+	{ value: 'second', label: 'Second' },
+];
+const TYPES = [
+	{ value: 'compulsory', label: 'Compulsory' },
+	{ value: 'elective', label: 'Elective' },
+];
 
 export default function EditCourseModal({ course, onClose, onSuccess }) {
+	const { data: faculties = [] } = useDepartments();
+	const { mutateAsync: updateCourse, isPending } = useUpdateCourse();
+
+	// Seeded from the CourseResource shape the list endpoint returns.
 	const [values, setValues] = useState({
-		id: course?.id || "",
-		units: String(course?.units || ""),
-		title: course?.title || "",
-		department: course?.department || "",
-		level: String(course?.level || ""),
-		lecturerName: course?.lecturer?.name || "",
-		semester: course?.semester || "",
+		code: course?.code ?? '',
+		title: course?.title ?? '',
+		credit_units: String(course?.credit_units ?? ''),
+		level: String(course?.level ?? ''),
+		semester: course?.semester ?? '',
+		type: course?.type ?? '',
+		department_id: String(course?.department?.id ?? ''),
+		description: course?.description ?? '',
 	});
 
 	const [errors, setErrors] = useState({});
-	const [touched, setTouched] = useState({});
-	const [submitting, setSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState(null);
 
-	const validate = (vals) => {
-		const errs = {};
-		courseFields.forEach((f) => {
-			if (!vals[f.name]) errs[f.name] = `${f.label} is required`;
-		});
-		return errs;
+	const departments = faculties.flatMap(
+		(faculty) => faculty.departments ?? [],
+	);
+
+	const handleChange = (event) => {
+		const { name, value } = event.target;
+		setValues((previous) => ({ ...previous, [name]: value }));
+		setErrors((previous) => ({ ...previous, [name]: undefined }));
 	};
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setValues((prev) => ({ ...prev, [name]: value }));
-		if (touched[name]) {
-			const errs = validate({ ...values, [name]: value });
-			setErrors((prev) => ({ ...prev, [name]: errs[name] || undefined }));
-		}
+	const validate = () => {
+		const next = {};
+
+		if (!values.code.trim()) next.code = 'Course code is required';
+		if (!values.title.trim()) next.title = 'Title is required';
+		if (!values.credit_units)
+			next.credit_units = 'Credit units are required';
+		if (!values.level) next.level = 'Level is required';
+		if (!values.semester) next.semester = 'Semester is required';
+		if (!values.type) next.type = 'Type is required';
+		if (!values.department_id)
+			next.department_id = 'Department is required';
+
+		return next;
 	};
 
-	const handleBlur = (e) => {
-		const { name } = e.target;
-		setTouched((prev) => ({ ...prev, [name]: true }));
-		const errs = validate(values);
-		setErrors((prev) => ({ ...prev, [name]: errs[name] || undefined }));
-	};
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		setSubmitError(null);
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		const errs = validate(values);
-		if (Object.keys(errs).length > 0) {
-			setErrors(errs);
-			setTouched(Object.fromEntries(courseFields.map((f) => [f.name, true])));
+		const found = validate();
+
+		if (Object.keys(found).length > 0) {
+			setErrors(found);
 			return;
 		}
+
 		try {
-			setSubmitting(true);
-			await new Promise((res) => setTimeout(res, 1000)); // replace with api.put(`/courses/${course.id}`, values)
+			await updateCourse({
+				courseId: course.id,
+				payload: {
+					code: values.code.trim(),
+					title: values.title.trim(),
+					credit_units: Number(values.credit_units),
+					level: values.level,
+					semester: values.semester,
+					type: values.type,
+					department_id: Number(values.department_id),
+					description: values.description || null,
+				},
+			});
+
 			onClose();
 			onSuccess();
-		} catch (err) {
-			console.error(err);
-		} finally {
-			setSubmitting(false);
+		} catch (requestError) {
+			// Surface the API's field errors rather than swallowing them into a
+			// console.error, which is what the previous stub did.
+			setErrors(
+				Object.fromEntries(
+					Object.entries(
+						requestError.response?.data?.errors ?? {},
+					).map(([field, messages]) => [field, messages[0]]),
+				),
+			);
+			setSubmitError(getErrorMessage(requestError));
 		}
 	};
+
+	const field = (name, label, input) => (
+		<div className='flex flex-col gap-2'>
+			<label htmlFor={name} className='text-sm font-medium text-black'>
+				{label}
+			</label>
+			{input}
+			{errors[name] && (
+				<p className='text-xs text-red-500'>{errors[name]}</p>
+			)}
+		</div>
+	);
+
+	const inputClass = (name) =>
+		`rounded-[10px] border px-4 py-3 text-sm focus-visible:border-brand-orange focus-visible:outline-2 focus-visible:outline-brand-border ${
+			errors[name] ? 'border-red-500' : 'border-border'
+		}`;
 
 	return (
 		<Modal
@@ -68,62 +125,152 @@ export default function EditCourseModal({ course, onClose, onSuccess }) {
 			description='Update course details'
 			onClose={onClose}
 		>
-			<form onSubmit={handleSubmit} className='px-4 pb-4 flex flex-col gap-6'>
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5'>
-					{courseFields.map((field) => (
-						<div
-							key={field.id}
-							className={field.colSpan === 2 ? "lg:col-span-2" : ""}
+			<form
+				onSubmit={handleSubmit}
+				className='flex flex-col gap-6 px-4 pb-4'
+			>
+				{submitError && (
+					<p role='alert' className='text-sm text-red-600'>
+						{submitError}
+					</p>
+				)}
+
+				<div className='grid grid-cols-1 gap-x-8 gap-y-5 lg:grid-cols-2'>
+					{field(
+						'code',
+						'Course Code',
+						<input
+							id='code'
+							name='code'
+							value={values.code}
+							onChange={handleChange}
+							className={inputClass('code')}
+						/>,
+					)}
+
+					{field(
+						'title',
+						'Course Title',
+						<input
+							id='title'
+							name='title'
+							value={values.title}
+							onChange={handleChange}
+							className={inputClass('title')}
+						/>,
+					)}
+
+					{field(
+						'credit_units',
+						'Credit Units',
+						<input
+							id='credit_units'
+							name='credit_units'
+							type='number'
+							min='1'
+							max='6'
+							value={values.credit_units}
+							onChange={handleChange}
+							className={inputClass('credit_units')}
+						/>,
+					)}
+
+					{field(
+						'level',
+						'Level',
+						<select
+							id='level'
+							name='level'
+							value={values.level}
+							onChange={handleChange}
+							className={inputClass('level')}
 						>
-							<div className='flex flex-col gap-2'>
-								<label
-									htmlFor={field.id}
-									className='text-sm font-medium text-black'
-								>
-									{field.label}
-								</label>
-								{field.type === "select" ? (
-									<select
-										id={field.id}
-										name={field.name}
-										value={values[field.name]}
-										onChange={handleChange}
-										onBlur={handleBlur}
-										className={`border rounded-[10px] px-4 py-3 text-sm focus:outline-none focus:border-brand-orange ${
-											touched[field.name] && errors[field.name]
-												? "border-red-500"
-												: "border-border"
-										}`}
+							<option value=''>Select level</option>
+							{LEVELS.map((level) => (
+								<option key={level} value={level}>
+									{level}
+								</option>
+							))}
+						</select>,
+					)}
+
+					{field(
+						'semester',
+						'Semester',
+						<select
+							id='semester'
+							name='semester'
+							value={values.semester}
+							onChange={handleChange}
+							className={inputClass('semester')}
+						>
+							<option value=''>Select semester</option>
+							{SEMESTERS.map((option) => (
+								<option key={option.value} value={option.value}>
+									{option.label}
+								</option>
+							))}
+						</select>,
+					)}
+
+					{field(
+						'type',
+						'Type',
+						<select
+							id='type'
+							name='type'
+							value={values.type}
+							onChange={handleChange}
+							className={inputClass('type')}
+						>
+							<option value=''>Select type</option>
+							{TYPES.map((option) => (
+								<option key={option.value} value={option.value}>
+									{option.label}
+								</option>
+							))}
+						</select>,
+					)}
+
+					<div className='lg:col-span-2'>
+						{field(
+							'department_id',
+							'Department',
+							<select
+								id='department_id'
+								name='department_id'
+								value={values.department_id}
+								onChange={handleChange}
+								className={`w-full ${inputClass('department_id')}`}
+							>
+								<option value=''>Select department</option>
+								{departments.map((department) => (
+									<option
+										key={department.id}
+										value={department.id}
 									>
-										<option value=''>{field.placeholder}</option>
-										{field.options.map((opt) => (
-											<option key={opt} value={opt}>
-												{opt}
-											</option>
-										))}
-									</select>
-								) : (
-									<input
-										id={field.id}
-										name={field.name}
-										type={field.type}
-										placeholder={field.placeholder}
-										value={values[field.name]}
-										onChange={handleChange}
-										onBlur={handleBlur}
-										className={`border rounded-[10px] px-4 py-3 text-sm focus:outline-none focus:border-brand-orange ${
-											touched[field.name] && errors[field.name]
-												? "border-red-500"
-												: "border-border"
-										}`}
-									/>
-								)}
-								{touched[field.name] && errors[field.name] && (
-									<p className='text-red-500 text-xs'>{errors[field.name]}</p>
-								)}
-							</div>
-						</div>
-					))}
+										{department.name}
+									</option>
+								))}
+							</select>,
+						)}
+					</div>
+
+					<div className='lg:col-span-2'>
+						{field(
+							'description',
+							'Description (optional)',
+							<textarea
+								id='description'
+								name='description'
+								rows={3}
+								maxLength={1000}
+								value={values.description}
+								onChange={handleChange}
+								className={`w-full resize-y ${inputClass('description')}`}
+							/>,
+						)}
+					</div>
 				</div>
 
 				<div className='flex justify-end gap-3'>
@@ -131,12 +278,16 @@ export default function EditCourseModal({ course, onClose, onSuccess }) {
 						type='button'
 						variant='tertiary'
 						onClick={onClose}
-						disabled={submitting}
+						disabled={isPending}
 					>
 						Cancel
 					</Button>
-					<Button type='submit' variant='primary' disabled={submitting}>
-						{submitting ? "Updating..." : "Update Course"}
+					<Button
+						type='submit'
+						variant='primary'
+						disabled={isPending}
+					>
+						{isPending ? 'Updating…' : 'Update Course'}
 					</Button>
 				</div>
 			</form>
