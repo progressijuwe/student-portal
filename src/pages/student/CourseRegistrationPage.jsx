@@ -8,10 +8,13 @@ import { useAvailableOfferings } from '../../hooks/student/useAvailableOfferings
 import { useSubmitRegistration } from '../../hooks/student/useSubmitRegistration';
 import { useMyEnrollments } from '../../hooks/student/useMyEnrollments';
 import { useAcademicRules } from '../../hooks/useAcademicRules';
-import { useAcademicSessions } from '../../hooks/useAcademicSessions';
+import { useSelectedSession } from '../../hooks/useSelectedSession';
 import { transformOffering } from '../../utils/transformOffering';
 
-const SEMESTER = 'first'; // TODO: wire to an actual semester selector if needed later
+const SEMESTERS = [
+	{ value: 'first', label: '1st Semester' },
+	{ value: 'second', label: '2nd Semester' },
+];
 
 const TABS = {
 	REGISTER: 'register',
@@ -21,28 +24,30 @@ const TABS = {
 export default function CourseRegistrationPage() {
 	const [activeTab, setActiveTab] = useState(TABS.REGISTER);
 
+	// Was a module-level `const SEMESTER = 'first'`, which made second-semester
+	// registration unreachable: offerings existed and the API returned them, but
+	// this page could only ever ask for the first semester, so students saw
+	// "No courses are available for registration right now" for half the year.
+	const { sessionId, semester, setSemester, selectedSession } =
+		useSelectedSession();
+
 	const {
 		data: rawOfferings,
 		isLoading,
 		isError,
-	} = useAvailableOfferings({ semester: SEMESTER });
+	} = useAvailableOfferings({ semester });
 	const { data: rules } = useAcademicRules();
-	const { data: sessions } = useAcademicSessions();
 	const {
 		mutate: submitRegistration,
 		isPending: isSubmitting,
 		error: submitError,
 	} = useSubmitRegistration();
 
-	const currentSessionId = sessions?.find((s) => s.is_current)?.id;
 	const {
 		data: myEnrollments,
 		isLoading: isLoadingEnrollments,
 		isError: isEnrollmentsError,
-	} = useMyEnrollments({
-		sessionId: currentSessionId,
-		semester: SEMESTER,
-	});
+	} = useMyEnrollments({ sessionId, semester });
 
 	const availableCourses = useMemo(
 		() => (rawOfferings ?? []).map(transformOffering),
@@ -94,14 +99,55 @@ export default function CourseRegistrationPage() {
 		);
 	};
 
+	// Selections are offerings of the semester they were picked in, so they
+	// cannot carry across — submitting a first-semester basket against the
+	// second semester's credit limit is not a coherent request.
+	const handleSemesterChange = (next) => {
+		setSemester(next);
+		setSelected([]);
+		setSubmitSuccess(false);
+	};
+
 	const minUnits = rules?.min_credit_units_per_semester ?? 0;
 	const maxUnits = rules?.max_credit_units_per_semester ?? 24;
 
 	return (
 		<div className='py-6 px-5 lg:px-8 flex flex-col gap-6'>
-			<h1 className='text-xl lg:text-3xl font-semibold text-black'>
-				Course Registration
-			</h1>
+			<div className='flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between'>
+				<div className='flex flex-col gap-1'>
+					<h1 className='text-xl lg:text-3xl font-semibold text-black'>
+						Course Registration
+					</h1>
+					{selectedSession && (
+						<p className='text-sm text-label'>
+							{selectedSession.name}
+						</p>
+					)}
+				</div>
+
+				<div className='flex flex-col gap-1.5 lg:w-56'>
+					<label
+						htmlFor='registration-semester'
+						className='text-xs font-medium text-dark'
+					>
+						Semester
+					</label>
+					<select
+						id='registration-semester'
+						value={semester}
+						onChange={(event) =>
+							handleSemesterChange(event.target.value)
+						}
+						className='rounded-[10px] border border-brand-orange bg-white p-2.5 text-xs text-black'
+					>
+						{SEMESTERS.map((option) => (
+							<option key={option.value} value={option.value}>
+								{option.label}
+							</option>
+						))}
+					</select>
+				</div>
+			</div>
 
 			{/* Tabs */}
 			<div className='flex gap-6 border-b border-border'>

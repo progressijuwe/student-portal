@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import PageHeading from '../../components/ui/PageHeading';
 import AcademicSession from '../../sections/student/results/AcademicSession';
 import ResultsTable from '../../sections/student/results/ResultsTable';
@@ -14,8 +13,10 @@ const DEGREE_PREFIX = {
 
 export default function ResultsPage() {
 	const { data: dashboard } = useStudentDashboard();
-	const { sessions, sessionId, setSessionId } = useSelectedSession();
-	const [semester, setSemester] = useState('first');
+	// The semester now defaults to whichever one the selected session is
+	// actually in, instead of always opening on the first.
+	const { sessions, sessionId, setSessionId, semester, setSemester } =
+		useSelectedSession();
 
 	const { data, isLoading, isError } = useGrades({ sessionId, semester });
 
