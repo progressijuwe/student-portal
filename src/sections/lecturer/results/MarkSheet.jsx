@@ -25,8 +25,14 @@ function toRows(students = []) {
 			examScore: grade?.exam_score ?? '',
 			letterGrade: grade?.letter_grade ?? '',
 			status: STATUS_LABELS[grade?.status] ?? 'Draft',
+			// Only present on a rejected grade — the API omits the key entirely
+			// otherwise. This is the admin's instruction for what to correct,
+			// and the only place the lecturer ever sees it.
+			rejectionReason: grade?.rejection_reason ?? '',
 			// An approved grade is final; a pending one is awaiting review and
-			// must not be edited underneath the admin looking at it.
+			// must not be edited underneath the admin looking at it. A rejected
+			// one is precisely what the lecturer is being asked to change, so
+			// it stays editable.
 			locked: grade?.status === 'approved' || grade?.status === 'pending',
 		};
 	});
@@ -86,6 +92,10 @@ export default function MarkSheet({ course, students, isSuccess, isError }) {
 		(row) => row.status === 'Approved',
 	).length;
 
+	const rejectedCount = rows.filter(
+		(row) => row.status === 'Rejected',
+	).length;
+
 	return (
 		<>
 			{course && (
@@ -93,6 +103,7 @@ export default function MarkSheet({ course, students, isSuccess, isError }) {
 					{...course}
 					submittedCount={submittedCount}
 					approvedCount={approvedCount}
+					rejectedCount={rejectedCount}
 				/>
 			)}
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { gradeColor } from '../../../constants/grading';
 import { Button } from '../../../components/ui/Button';
 import Letter from '../../../assets/svg/letter.svg?react';
@@ -52,6 +52,25 @@ export default function ResultTable({ data, setData }) {
 					exam_score: s.examScore === '' ? null : s.examScore,
 				})),
 			);
+
+			// Saving over a rejected grade clears its reason and letter grade
+			// server-side. The local row has to follow, or a sheet that was sent
+			// back keeps showing "Rejected", the old letter grade and the old
+			// correction note until the page is remounted.
+			const savedIds = new Set(rows.map((s) => s.enrollmentId));
+
+			setData((prev) =>
+				prev.map((student) =>
+					savedIds.has(student.enrollmentId)
+						? {
+								...student,
+								status: 'Draft',
+								letterGrade: '',
+								rejectionReason: '',
+							}
+						: student,
+				),
+			);
 		} catch (error) {
 			setActionError(
 				getErrorMessage(error, { 500: 'Failed to save draft.' }),
@@ -94,6 +113,10 @@ export default function ResultTable({ data, setData }) {
 						...student,
 						letterGrade: submittedGrade.letter_grade,
 						status: 'Submitted',
+						// Resubmitting answers the rejection: the API clears
+						// the reason, so the note must go with it rather than
+						// hanging under a row that now reads "Submitted".
+						rejectionReason: '',
 						locked: true,
 					};
 				}),
@@ -185,131 +208,161 @@ export default function ResultTable({ data, setData }) {
 							</tr>
 						) : (
 							data.map((student, index) => (
-								<tr
-									key={student.enrollmentId}
-									className='border-b border-gray-100'
-								>
-									<td className='py-3 px-4 text-xs lg:text-base'>
-										{index + 1}
-									</td>
-									<th className='py-3 px-4 font-bold text-xs lg:text-base'>
-										{student.matric}
-									</th>
-									<td className='py-3 px-4 text-xs lg:text-base text-nowrap'>
-										{student.name}
-									</td>
-									{/* CA */}
-									<td className='relative px-2.5 text-xs lg:text-base'>
-										<label
-											htmlFor={`ca-${student.enrollmentId}`}
-											className='sr-only'
-										>
-											CA score for {student.name}
-										</label>
-										<input
-											id={`ca-${student.enrollmentId}`}
-											type='number'
-											min={0}
-											max={20}
-											disabled={student.locked}
-											aria-disabled={student.locked}
-											title={
-												student.locked
-													? 'Cannot edit after submission'
-													: ''
-											}
-											className='border rounded px-2 py-1 w-full max-w-16'
-											value={student.caScore ?? ''}
-											onChange={(e) =>
-												handleChange(
-													student.enrollmentId,
-													'caScore',
-													e.target.value,
-												)
-											}
-										/>
-									</td>
-									{/* Project */}
-									<td className='relative py-3 px-4 text-xs lg:text-base'>
-										<label
-											htmlFor={`project-${student.enrollmentId}`}
-											className='sr-only'
-										>
-											Project score for {student.name}
-										</label>
-										<input
-											id={`project-${student.enrollmentId}`}
-											type='number'
-											min={0}
-											max={20}
-											disabled={student.locked}
-											aria-disabled={student.locked}
-											className='border rounded px-2 py-1 w-full max-w-16'
-											value={student.projectScore ?? ''}
-											onChange={(e) =>
-												handleChange(
-													student.enrollmentId,
-													'projectScore',
-													e.target.value,
-												)
-											}
-										/>
-									</td>
-									{/* Exam */}
-									<td className=' relative py-3 px-4 text-xs lg:text-base'>
-										<label
-											htmlFor={`exam-${student.enrollmentId}`}
-											className='sr-only'
-										>
-											Exam score for {student.name}
-										</label>
-										<input
-											id={`exam-${student.enrollmentId}`}
-											type='number'
-											min={0}
-											max={60}
-											disabled={student.locked}
-											aria-disabled={student.locked}
-											className='border rounded px-2 py-1 w-full max-w-16'
-											value={student.examScore ?? ''}
-											onChange={(e) =>
-												handleChange(
-													student.enrollmentId,
-													'examScore',
-													e.target.value,
-												)
-											}
-										/>
-									</td>
-									{/* Grade */}
-									<td className='py-3 px-4 text-xs lg:text-base'>
-										{student.letterGrade && (
-											<span
-												className={`px-2 py-1 rounded text-xs ${gradeColor(student.letterGrade)}`}
+								<Fragment key={student.enrollmentId}>
+									<tr
+										className={
+											student.rejectionReason
+												? ''
+												: 'border-b border-gray-100'
+										}
+									>
+										<td className='py-3 px-4 text-xs lg:text-base'>
+											{index + 1}
+										</td>
+										<th className='py-3 px-4 font-bold text-xs lg:text-base'>
+											{student.matric}
+										</th>
+										<td className='py-3 px-4 text-xs lg:text-base text-nowrap'>
+											{student.name}
+										</td>
+										{/* CA */}
+										<td className='relative px-2.5 text-xs lg:text-base'>
+											<label
+												htmlFor={`ca-${student.enrollmentId}`}
+												className='sr-only'
 											>
-												{student.letterGrade}
-											</span>
-										)}
-									</td>
-									{/* Status */}
-									<td className='py-3 px-4 text-xs lg:text-base'>
-										<span
-											className={`px-2.5 py-0.5 rounded-[10px] text-xs ${
-												student.status === 'Draft'
-													? 'bg-[#C9C9C9] text-[#2C2C2C]'
-													: student.status ===
-														  'Approved'
-														? 'bg-green-100 text-green-700'
+												CA score for {student.name}
+											</label>
+											<input
+												id={`ca-${student.enrollmentId}`}
+												type='number'
+												min={0}
+												max={20}
+												disabled={student.locked}
+												aria-disabled={student.locked}
+												title={
+													student.locked
+														? 'Cannot edit after submission'
+														: ''
+												}
+												className='border rounded px-2 py-1 w-full max-w-16'
+												value={student.caScore ?? ''}
+												onChange={(e) =>
+													handleChange(
+														student.enrollmentId,
+														'caScore',
+														e.target.value,
+													)
+												}
+											/>
+										</td>
+										{/* Project */}
+										<td className='relative py-3 px-4 text-xs lg:text-base'>
+											<label
+												htmlFor={`project-${student.enrollmentId}`}
+												className='sr-only'
+											>
+												Project score for {student.name}
+											</label>
+											<input
+												id={`project-${student.enrollmentId}`}
+												type='number'
+												min={0}
+												max={20}
+												disabled={student.locked}
+												aria-disabled={student.locked}
+												className='border rounded px-2 py-1 w-full max-w-16'
+												value={
+													student.projectScore ?? ''
+												}
+												onChange={(e) =>
+													handleChange(
+														student.enrollmentId,
+														'projectScore',
+														e.target.value,
+													)
+												}
+											/>
+										</td>
+										{/* Exam */}
+										<td className=' relative py-3 px-4 text-xs lg:text-base'>
+											<label
+												htmlFor={`exam-${student.enrollmentId}`}
+												className='sr-only'
+											>
+												Exam score for {student.name}
+											</label>
+											<input
+												id={`exam-${student.enrollmentId}`}
+												type='number'
+												min={0}
+												max={60}
+												disabled={student.locked}
+												aria-disabled={student.locked}
+												className='border rounded px-2 py-1 w-full max-w-16'
+												value={student.examScore ?? ''}
+												onChange={(e) =>
+													handleChange(
+														student.enrollmentId,
+														'examScore',
+														e.target.value,
+													)
+												}
+											/>
+										</td>
+										{/* Grade */}
+										<td className='py-3 px-4 text-xs lg:text-base'>
+											{student.letterGrade && (
+												<span
+													className={`px-2 py-1 rounded text-xs ${gradeColor(student.letterGrade)}`}
+												>
+													{student.letterGrade}
+												</span>
+											)}
+										</td>
+										{/* Status */}
+										<td className='py-3 px-4 text-xs lg:text-base'>
+											<span
+												className={`px-2.5 py-0.5 rounded-[10px] text-xs ${
+													student.status === 'Draft'
+														? 'bg-[#C9C9C9] text-[#2C2C2C]'
 														: student.status ===
-															  'Rejected'
-															? 'bg-red-100 text-red-700'
-															: 'bg-blue-100 text-blue-700'
-											}`}
-										>
-											{student.status}
-										</span>
-									</td>
-								</tr>
+															  'Approved'
+															? 'bg-green-100 text-green-700'
+															: student.status ===
+																  'Rejected'
+																? 'bg-red-100 text-red-700'
+																: 'bg-blue-100 text-blue-700'
+												}`}
+											>
+												{student.status}
+											</span>
+										</td>
+									</tr>
+									{/*
+										The admin is required to give a reason
+										when returning a mark sheet, and this is
+										the only place it ever reaches the
+										lecturer — without it a "Rejected" chip
+										asks for a correction without saying
+										what to correct.
+									*/}
+									{student.rejectionReason && (
+										<tr className='border-b border-gray-100'>
+											<td
+												colSpan={8}
+												className='px-4 pb-3 text-xs lg:text-sm'
+											>
+												<p className='rounded-[10px] bg-red-50 px-3 py-2 text-red-700'>
+													<span className='font-semibold'>
+														Returned for correction:
+													</span>{' '}
+													{student.rejectionReason}
+												</p>
+											</td>
+										</tr>
+									)}
+								</Fragment>
 							))
 						)}
 					</tbody>
