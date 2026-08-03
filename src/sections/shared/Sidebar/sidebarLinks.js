@@ -35,6 +35,9 @@ export const adminLinks = [
 	{ path: '/admin/students', text: 'Students', Icon: StudentsIcon },
 	{ path: '/admin/lecturers', text: 'Lecturers', Icon: LecturersIcon },
 	{ path: '/admin/courses', text: 'Courses', Icon: CoursesIcon },
+	// Sits between the catalogue and the registrations it makes possible,
+	// because that is the order an admin has to do them in.
+	{ path: '/admin/offerings', text: 'Course offerings', Icon: CourseIcon },
 	{
 		path: '/admin/courses-registrations',
 		text: 'Course registrations',

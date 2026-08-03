@@ -80,6 +80,34 @@ export async function setCourseActive(courseId, isActive) {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Course offerings                                                            */
+/*                                                                             */
+/* A course is a catalogue entry; an offering is that course actually being run */
+/* in a given session and semester, with a lecturer attached. Registration,     */
+/* grading and the timetable all hang off the offering, so nothing downstream   */
+/* can start until one exists.                                                  */
+/* -------------------------------------------------------------------------- */
+
+export async function fetchOfferings(params) {
+	const { data } = await api.get('/admin/offerings', { params });
+	return data;
+}
+
+export async function createOffering(payload) {
+	const { data } = await api.post('/admin/offerings', payload);
+	return data.data;
+}
+
+/**
+ * Only the lecturer and the active flag are editable — the course, session and
+ * semester are the offering's identity and the API rejects changes to them.
+ */
+export async function updateOffering(offeringId, payload) {
+	const { data } = await api.patch(`/admin/offerings/${offeringId}`, payload);
+	return data.data;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Course registration review                                                  */
 /*                                                                             */
 /* Grouped by student server-side: one row per student with all their courses,  */

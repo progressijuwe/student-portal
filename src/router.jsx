@@ -43,6 +43,9 @@ const AdminLecturersPage = lazy(
 	() => import('./pages/admin/AdminLecturersPage'),
 );
 const AdminCoursesPage = lazy(() => import('./pages/admin/AdminCoursesPage'));
+const AdminOfferingsPage = lazy(
+	() => import('./pages/admin/AdminOfferingsPage'),
+);
 const AdminCourseRegistrationsPage = lazy(
 	() => import('./pages/admin/AdminCourseRegistrationsPage'),
 );
@@ -137,6 +140,7 @@ export const router = createBrowserRouter([
 					{ path: 'students', element: page(AdminStudentsPage) },
 					{ path: 'lecturers', element: page(AdminLecturersPage) },
 					{ path: 'courses', element: page(AdminCoursesPage) },
+					{ path: 'offerings', element: page(AdminOfferingsPage) },
 					{
 						path: 'courses-registrations',
 						element: page(AdminCourseRegistrationsPage),

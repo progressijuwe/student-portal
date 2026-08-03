@@ -56,6 +56,7 @@ export const queryKeys = {
 		],
 
 		courses: (params = {}) => ['admin', 'courses', params],
+		offerings: (params = {}) => ['admin', 'offerings', params],
 		registrations: (params = {}) => ['admin', 'registrations', params],
 		results: (params = {}) => ['admin', 'results', params],
 		resultDetail: (offeringId, params = {}) => [
