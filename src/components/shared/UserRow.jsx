@@ -14,6 +14,13 @@ export default function UserRow({ user, onView, onEdit, onDelete }) {
 				<p className='font-medium text-black'>
 					{user.displayName ?? user.name}
 				</p>
+				{/* Nothing is emailed, so this badge is how a locked-out user
+				    becomes visible to the admin at all. */}
+				{user.resetRequestedAt && (
+					<span className='mt-1 inline-block rounded-[10px] bg-[#FFF7ED] px-2 py-0.5 text-xs font-medium text-[#9F0712]'>
+						Reset requested
+					</span>
+				)}
 			</td>
 			<td className='py-4 px-2 text-label font-medium'>
 				<span className='flex items-center gap-1'>
@@ -24,8 +31,12 @@ export default function UserRow({ user, onView, onEdit, onDelete }) {
 				</span>
 			</td>
 			<td className='py-4 px-2 font-medium'>{user.department}</td>
+			{/* Students show their level here; lecturers show how many courses
+			    they run this session. This used to read `user.courses?.length`,
+			    but no lecturer payload ever carried a `courses` array, so the
+			    column was permanently blank. */}
 			<td className='py-4 px-2 font-medium'>
-				{user.level ?? user.courses?.length}
+				{user.level ?? user.coursesCount}
 			</td>
 			<td className='py-4 px-2 font-medium text-center'>
 				{user.enrollmentYear ?? user.joinYear}

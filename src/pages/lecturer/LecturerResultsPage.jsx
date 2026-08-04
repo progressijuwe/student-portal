@@ -68,6 +68,7 @@ export default function LecturerResultsPage() {
 				key={selectedOfferingId}
 				course={selectedCourse}
 				students={studentsData?.students ?? []}
+				totalStudents={studentsData?.meta?.total}
 				isSuccess={studentsLoaded}
 				isError={studentsError}
 			/>

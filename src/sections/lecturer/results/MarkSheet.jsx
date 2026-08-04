@@ -59,7 +59,13 @@ function toRows(students = []) {
  * reports `isLoading` as false in that window — so keying off it seeded from
  * the empty fallback again, just with tighter timing.
  */
-export default function MarkSheet({ course, students, isSuccess, isError }) {
+export default function MarkSheet({
+	course,
+	students,
+	totalStudents,
+	isSuccess,
+	isError,
+}) {
 	const [rows, setRows] = useState([]);
 	const [isSeeded, setIsSeeded] = useState(false);
 	const [searchTerm, setSearchTerm] = useState('');
@@ -96,6 +102,12 @@ export default function MarkSheet({ course, students, isSuccess, isError }) {
 		(row) => row.status === 'Rejected',
 	).length;
 
+	// The class list and the batch-submit endpoint share a 500-row ceiling, so a
+	// larger cohort is a genuine system limit rather than a display quirk. It is
+	// stated plainly: silently grading the first 500 of 600 students and
+	// reporting success would be the worst possible outcome here.
+	const isTruncated = isSeeded && totalStudents > rows.length;
+
 	return (
 		<>
 			{course && (
@@ -105,6 +117,21 @@ export default function MarkSheet({ course, students, isSuccess, isError }) {
 					approvedCount={approvedCount}
 					rejectedCount={rejectedCount}
 				/>
+			)}
+
+			{isTruncated && (
+				<p
+					role='alert'
+					className='rounded-[10px] bg-[#FFF7ED] px-4 py-3 text-sm text-[#9F0712]'
+				>
+					<span className='font-semibold'>
+						Showing {rows.length} of {totalStudents} students.
+					</span>{' '}
+					This course has more students than can be graded in one
+					submission. Contact the administrator before entering marks
+					— anything you submit here would cover only the students
+					listed below.
+				</p>
 			)}
 
 			<StudentSearch onSearch={setSearchTerm} />

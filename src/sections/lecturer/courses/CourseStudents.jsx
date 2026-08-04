@@ -39,7 +39,12 @@ export default function CourseStudents({ offeringId }) {
 							Registered Students
 						</h3>
 						<p className='font-medium text-sm md:text-base text-label'>
-							{students.length} Students enrolled
+							{/* meta.total, not the length of the page: this read
+							    "20 Students enrolled" for every class of 20 or
+							    more, because the response was a page and
+							    nothing said so. */}
+							{data?.meta?.total ?? students.length} Students
+							enrolled
 						</p>
 					</div>
 				</div>

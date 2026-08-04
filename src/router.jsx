@@ -13,6 +13,9 @@ import PageFallback from './components/ui/PageFallback';
  */
 const LandingPage = lazy(() => import('./pages/shared/LandingPage'));
 const LoginPage = lazy(() => import('./pages/shared/LoginPage'));
+const ForgotPasswordPage = lazy(
+	() => import('./pages/shared/ForgotPasswordPage'),
+);
 const ProfilePage = lazy(() => import('./pages/shared/ProfilePage'));
 
 const StudentLayout = lazy(() => import('./layouts/StudentLayout'));
@@ -46,6 +49,11 @@ const AdminCoursesPage = lazy(() => import('./pages/admin/AdminCoursesPage'));
 const AdminOfferingsPage = lazy(
 	() => import('./pages/admin/AdminOfferingsPage'),
 );
+const AdminSessionsPage = lazy(() => import('./pages/admin/AdminSessionsPage'));
+const AdminVenuesPage = lazy(() => import('./pages/admin/AdminVenuesPage'));
+const AdminTimetablePage = lazy(
+	() => import('./pages/admin/AdminTimetablePage'),
+);
 const AdminCourseRegistrationsPage = lazy(
 	() => import('./pages/admin/AdminCourseRegistrationsPage'),
 );
@@ -72,6 +80,11 @@ export const router = createBrowserRouter([
 	{
 		path: '/login',
 		element: page(LoginPage),
+		errorElement: <RouteError />,
+	},
+	{
+		path: '/forgot-password',
+		element: page(ForgotPasswordPage),
 		errorElement: <RouteError />,
 	},
 	{
@@ -141,6 +154,9 @@ export const router = createBrowserRouter([
 					{ path: 'lecturers', element: page(AdminLecturersPage) },
 					{ path: 'courses', element: page(AdminCoursesPage) },
 					{ path: 'offerings', element: page(AdminOfferingsPage) },
+					{ path: 'sessions', element: page(AdminSessionsPage) },
+					{ path: 'venues', element: page(AdminVenuesPage) },
+					{ path: 'timetable', element: page(AdminTimetablePage) },
 					{
 						path: 'courses-registrations',
 						element: page(AdminCourseRegistrationsPage),

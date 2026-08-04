@@ -24,9 +24,11 @@ export default function AddStudentModal({ onClose, onSuccess }) {
 					formData.append('entry_year', data.entry_year);
 					if (data.photo) formData.append('photo', data.photo);
 
-					await createUser(formData);
+					// The created user carries the temporary password, which is
+					// only in this response — the caller shows it to the admin.
+					const created = await createUser(formData);
 					onClose();
-					onSuccess?.();
+					onSuccess?.(created);
 				}}
 				onCancel={onClose}
 			/>

@@ -86,7 +86,10 @@ export default function LecturerAssigned() {
 									</td>
 									<td className='py-6 text-center'>
 										<span className='text-xs font-medium text-[#193CB8] bg-[#DBEAFE] px-3 py-1.5 rounded-full'>
-											{course.students} students
+											{course.students}{' '}
+											{course.students === 1
+												? 'student'
+												: 'students'}
 										</span>
 									</td>
 									<td className='py-6 text-center'>
@@ -134,7 +137,10 @@ export default function LecturerAssigned() {
 									{course.level}lv | {course.credits} Units
 								</p>
 								<span className='text-xs font-medium text-[#193CB8] bg-[#DBEAFE] px-3 py-1.5 rounded-full w-fit'>
-									{course.students} Students
+									{course.students}{' '}
+									{course.students === 1
+										? 'Student'
+										: 'Students'}
 								</span>
 							</div>
 						))}

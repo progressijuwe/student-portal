@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../api/axios';
+import { resetUserPassword } from '../../api/admin';
 import { queryKeys } from '../../api/queryKeys';
 
 async function updateUser({ id, ...payload }) {
@@ -41,4 +42,13 @@ export function useUpdateUser() {
 
 export function useDeleteUser() {
 	return useUserMutation(deleteUser);
+}
+
+/**
+ * Issues a new temporary password and clears any outstanding reset request, so
+ * the "Reset requested" badge and the dashboard counter both fall away once the
+ * admin has acted.
+ */
+export function useResetUserPassword() {
+	return useUserMutation(resetUserPassword);
 }

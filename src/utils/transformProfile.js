@@ -1,4 +1,4 @@
-import { getLevel } from './getLevel';
+import { formatLevel } from './formatLevel';
 
 export function transformProfile(user, cgpa) {
 	if (!user) return null;
@@ -13,7 +13,7 @@ export function transformProfile(user, cgpa) {
 		id: isStudent ? user.student_id : 'Lecturer',
 		dept: user.department?.name,
 		faculty: user.department?.faculty,
-		studyYear: isStudent ? getLevel(user.entry_year) : null,
+		studyYear: isStudent ? formatLevel(user.level) : null,
 		CGPA: isStudent ? (cgpa ?? '0.00') : null,
 		profilePhoto: user.profile_photo_url,
 		email: user.email,

@@ -2,8 +2,13 @@ import { AnimatePresence } from 'framer-motion';
 import { useLecturerQuery } from '../../hooks/useLecturerQuery';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { useAdminUsers } from '../../hooks/admin/useAdminUsers';
-import { useDeleteUser } from '../../hooks/admin/useUserMutations';
+import {
+	useDeleteUser,
+	useResetUserPassword,
+} from '../../hooks/admin/useUserMutations';
 import { useModal } from '../../hooks/useModal';
+import { useCsvDownload } from '../../hooks/useCsvDownload';
+import { exportUsers } from '../../api/admin';
 import { useDepartments } from '../../hooks/useDepartments';
 import { buildLecturerFilterFields } from '../../constants/filterConfig';
 import TableToolbar from '../../components/shared/TableToolbar';
@@ -11,6 +16,8 @@ import LecturerTable from '../../sections/admin/lecturers/LecturerTable';
 import Pagination from '../../components/ui/Pagination';
 import AddLecturerModal from '../../sections/admin/modals/AddLecturerModal';
 import AddSuccessModal from '../../sections/admin/modals/AddSuccessModal';
+import UserCredentialsModal from '../../sections/admin/modals/UserCredentialsModal';
+import BulkImportModal from '../../sections/admin/modals/BulkImportModal';
 import FilterModal from '../../sections/admin/modals/FilterModal';
 import DeleteUserModal from '../../sections/admin/modals/DeleteUserModal';
 import UpdateLecturerModal from '../../sections/admin/modals/UpdateLecturerModal';
@@ -19,7 +26,12 @@ import EntityPageShell from '../../components/ui/EntityPageShell';
 
 const MODAL = {
 	ADD: 'add',
-	SUCCESS: 'success',
+	// Creation and password resets both end on the credentials modal rather
+	// than the generic success toast: the temporary password is only readable
+	// there, and the admin has to copy it before it is gone.
+	CREDENTIALS: 'credentials',
+	RESET_CREDENTIALS: 'reset-credentials',
+	IMPORT: 'import',
 	FILTER: 'filter',
 	VIEW: 'view',
 	DELETE: 'delete',
@@ -45,10 +57,18 @@ function transformLecturer(user) {
 		phone: user.phone,
 		profilePhoto: user.profile_photo_url,
 
+		// Drives the "Reset requested" badge — the only signal an admin gets
+		// that someone is locked out, since nothing is emailed.
+		resetRequestedAt: user.password_reset_requested_at ?? null,
+
 		// Display
 		displayName: user.lecturer_profile?.display_name ?? user.name,
 		department: user.department?.name,
 		qualification: user.lecturer_profile?.highest_qualification,
+		// Offerings this lecturer runs in the current session — the "Courses"
+		// column. Defaults to 0 rather than undefined so the cell renders a
+		// number even for a lecturer who has not been assigned anything yet.
+		coursesCount: user.courses_count ?? 0,
 		joinYear: user.created_at ? user.created_at.slice(0, 4) : '',
 
 		// Form values — names must match `lecturerFields`
@@ -66,18 +86,27 @@ function transformLecturer(user) {
 export default function AdminLecturersPage() {
 	const { search, filters, page, setSearch, setFilters, setPage } =
 		useLecturerQuery();
-	const { modal, open, close } = useModal();
+	const { modal, open, close, openBriefly } = useModal();
 	const { mutateAsync: deleteUser } = useDeleteUser();
+	const { mutateAsync: resetPassword } = useResetUserPassword();
+	const exportCsv = useCsvDownload();
 	const { data: departments = [] } = useDepartments();
 
 	const debouncedSearch = useDebouncedValue(search);
 
-	const { data, isLoading, isError, refetch } = useAdminUsers({
+	// Named once so the export sends exactly the filters the table was built
+	// from. `page` is deliberately excluded: the export covers the whole
+	// matching set, not the slice on screen.
+	const exportParams = {
 		role: 'lecturer',
-		page,
 		search: debouncedSearch || undefined,
 		faculty_id: filters.faculty_id || undefined,
 		department_id: filters.department_id || undefined,
+	};
+
+	const { data, isLoading, isError, refetch } = useAdminUsers({
+		...exportParams,
+		page,
 	});
 
 	const lecturers = (data?.data ?? []).map(transformLecturer);
@@ -89,14 +118,18 @@ export default function AdminLecturersPage() {
 	const handleEdit = (lecturer) => open(MODAL.EDIT, lecturer);
 	const handleDelete = (lecturer) => open(MODAL.DELETE, lecturer);
 
-	const handleSuccess = (type) => {
-		open(type);
-		setTimeout(close, 2000);
-	};
+	// openBriefly cancels its own timer if anything else opens meanwhile, so a
+	// confirmation cannot dismiss a dialog the admin opened after it.
+	const handleSuccess = (type) => openBriefly(type);
 
 	const handleConfirmDelete = async (lecturer) => {
 		await deleteUser(lecturer.rawId);
 		handleSuccess(MODAL.DELETE_SUCCESS);
+	};
+
+	const handleResetPassword = async (lecturer) => {
+		const result = await resetPassword(lecturer.rawId);
+		open(MODAL.RESET_CREDENTIALS, result);
 	};
 
 	return (
@@ -106,6 +139,17 @@ export default function AdminLecturersPage() {
 				onSearch={setSearch}
 				onAdd={() => open(MODAL.ADD)}
 				onFilter={() => open(MODAL.FILTER)}
+				onImport={() => open(MODAL.IMPORT)}
+				// Exports exactly what the filters currently describe, not the
+				// page being displayed.
+				onExport={() =>
+					exportCsv.download(
+						() => exportUsers(exportParams),
+						`lecturers-${new Date().toISOString().slice(0, 10)}.csv`,
+					)
+				}
+				isExporting={exportCsv.isDownloading}
+				exportError={exportCsv.error}
 				addLabel='Add Lecturer'
 				searchPlaceholder='Search lecturers'
 			/>
@@ -130,14 +174,29 @@ export default function AdminLecturersPage() {
 				{modal.type === MODAL.ADD && (
 					<AddLecturerModal
 						onClose={close}
-						onSuccess={() => handleSuccess(MODAL.SUCCESS)}
+						onSuccess={(created) =>
+							open(MODAL.CREDENTIALS, created)
+						}
 					/>
 				)}
-				{modal.type === MODAL.SUCCESS && (
-					<AddSuccessModal
+				{modal.type === MODAL.CREDENTIALS && (
+					<UserCredentialsModal
+						heading='Lecturer Added'
+						description={`${modal.data?.name} can now sign in with the password below.`}
+						user={modal.data}
 						onClose={close}
-						text='Lecturer Added Successfully'
 					/>
+				)}
+				{modal.type === MODAL.RESET_CREDENTIALS && (
+					<UserCredentialsModal
+						heading='Password Reset'
+						description={`${modal.data?.name} can now sign in with the password below.`}
+						user={modal.data}
+						onClose={close}
+					/>
+				)}
+				{modal.type === MODAL.IMPORT && (
+					<BulkImportModal role='lecturer' onClose={close} />
 				)}
 				{modal.type === MODAL.FILTER && (
 					<FilterModal
@@ -183,6 +242,7 @@ export default function AdminLecturersPage() {
 						onClose={close}
 						onEdit={handleEdit}
 						onDelete={handleDelete}
+						onResetPassword={handleResetPassword}
 					/>
 				)}
 			</AnimatePresence>

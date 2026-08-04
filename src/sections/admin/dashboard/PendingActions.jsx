@@ -13,6 +13,14 @@ const actionConfig = {
 		actionText: 'Results pending approval',
 		actionLabel: 'Requires attention',
 	},
+	// Links straight to the students list already filtered to the people who
+	// are locked out. Nothing is emailed, so this card is how an admin finds
+	// out somebody cannot get in.
+	'password-reset': {
+		path: '/admin/students?reset_requested=true',
+		actionText: 'Password resets requested',
+		actionLabel: 'Users cannot sign in',
+	},
 };
 
 export default function PendingActions() {
@@ -21,6 +29,10 @@ export default function PendingActions() {
 	const actions = [
 		{ id: 'course-registration', count: data?.pending_registrations ?? 0 },
 		{ id: 'result', count: data?.pending_grades ?? 0 },
+		{
+			id: 'password-reset',
+			count: data?.pending_password_resets ?? 0,
+		},
 	]
 		.filter((a) => a.count > 0)
 		.map((a) => ({ ...actionConfig[a.id], ...a }));

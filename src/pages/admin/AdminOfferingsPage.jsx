@@ -33,7 +33,7 @@ const MODAL = {
 export default function AdminOfferingsPage() {
 	const { search, filters, page, setSearch, setFilters, setPage } =
 		useOfferingQuery();
-	const { modal, open, close } = useModal();
+	const { modal, open, close, openBriefly } = useModal();
 
 	const debouncedSearch = useDebouncedValue(search);
 
@@ -57,10 +57,9 @@ export default function AdminOfferingsPage() {
 	const offerings = data?.data ?? [];
 	const meta = data?.meta ?? {};
 
-	const handleSuccess = (type) => {
-		open(type);
-		setTimeout(close, 2000);
-	};
+	// openBriefly cancels its own timer if anything else opens meanwhile, so a
+	// confirmation cannot dismiss a dialog the admin opened after it.
+	const handleSuccess = (type) => openBriefly(type);
 
 	return (
 		<EntityPageShell title='Course Offerings'>

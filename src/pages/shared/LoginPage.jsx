@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/portal-logo.png';
 import { useLogin } from '../../hooks/useLogin';
 import { getErrorMessage } from '../../utils/getErrorMessage';
@@ -117,19 +117,17 @@ export default function LoginPage() {
 						</p>
 					)}
 					{/*
-						Password reset is not implemented end to end yet � there is
-						no /auth/forgot-password route on the API. Rendering this
-						as disabled with an explanation is honest; a button that
-						silently does nothing is not.
+						Recovery is administrator-driven rather than an emailed
+						link, because no mail service is configured. The page
+						this leads to says so rather than leaving anyone waiting
+						for a message that cannot arrive.
 					*/}
-					<button
-						type='button'
-						disabled
-						title='Password reset is not available yet � please contact your department administrator.'
-						className='text-right text-sm font-semibold text-brand-orange disabled:cursor-not-allowed disabled:opacity-50'
+					<Link
+						to='/forgot-password'
+						className='text-right text-sm font-semibold text-brand-orange'
 					>
 						Forgot Password?
-					</button>
+					</Link>
 				</div>
 				<button
 					type='submit'

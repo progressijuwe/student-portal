@@ -11,6 +11,10 @@ export default function TableToolbar({
 	onSearch,
 	onAdd,
 	onFilter,
+	onImport,
+	onExport,
+	isExporting = false,
+	exportError,
 	addLabel,
 	searchPlaceholder,
 }) {
@@ -34,16 +38,40 @@ export default function TableToolbar({
 			</div>
 
 			<div className='flex items-center gap-2'>
+				{/* Only the people pages import — the courses page shares this
+				    toolbar and has no CSV format behind it. */}
+				{onImport && (
+					<Button variant='secondary' onClick={onImport}>
+						<ExportIcon className='size-5 rotate-180' />
+						Import
+					</Button>
+				)}
+
 				<Button variant='secondary' onClick={onFilter}>
 					<FilterIcon className='size-5' />
 					Filter
 				</Button>
 
-				<Button variant='secondary'>
+				<Button
+					variant='secondary'
+					onClick={onExport}
+					disabled={isExporting}
+				>
 					<ExportIcon className='size-5' />
-					Export
+					{isExporting ? 'Exporting…' : 'Export'}
 				</Button>
 			</div>
+
+			{/* A download has no visible result on the page when it works, so a
+			    failure has to say so explicitly or it looks the same. */}
+			{exportError && (
+				<p
+					role='alert'
+					className='w-full text-sm text-red-600 lg:text-right'
+				>
+					{exportError}
+				</p>
+			)}
 		</div>
 	);
 }

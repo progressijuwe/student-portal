@@ -74,7 +74,7 @@ export default function DashboardCards() {
 							className='h-fit w-fit rounded-[10px] p-1.25 lg:p-2.5'
 							style={{ backgroundColor: det.color }}
 						>
-							<det.Icon className='size-3.75 lg:size-7.5' />
+							<det.Icon className='size-2.75 lg:size-4.5' />
 						</span>
 					)}
 				</div>

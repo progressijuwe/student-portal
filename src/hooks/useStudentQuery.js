@@ -5,6 +5,9 @@ const STUDENT_FILTER_KEYS = [
 	'department_id',
 	'level',
 	'entry_year',
+	// Set by the dashboard's "Password resets requested" card, so the link
+	// lands on the list already narrowed to the people who are locked out.
+	'reset_requested',
 ];
 
 /**
