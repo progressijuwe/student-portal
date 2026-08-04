@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import PageHeading from '../../components/ui/PageHeading';
 import AcademicSession from '../../sections/student/results/AcademicSession';
 import ResultsTable from '../../sections/student/results/ResultsTable';
 import StudentResultsActions from '../../sections/student/results/StudentResultActions';
+import TranscriptModal from '../../sections/student/results/TranscriptModal';
 import { useSelectedSession } from '../../hooks/useSelectedSession';
 import { useGrades } from '../../hooks/student/useGrades';
 import { useStudentDashboard } from '../../hooks/student/useStudentDashboard';
@@ -14,10 +16,13 @@ const DEGREE_PREFIX = {
 
 export default function ResultsPage() {
 	const { data: dashboard } = useStudentDashboard();
-	const { sessions, sessionId, setSessionId } = useSelectedSession();
-	const [semester, setSemester] = useState('first');
+	// The semester now defaults to whichever one the selected session is
+	// actually in, instead of always opening on the first.
+	const { sessions, sessionId, setSessionId, semester, setSemester } =
+		useSelectedSession();
 
 	const { data, isLoading, isError } = useGrades({ sessionId, semester });
+	const [showTranscript, setShowTranscript] = useState(false);
 
 	const selectedSession = sessions.find(
 		(s) => String(s.id) === String(sessionId),
@@ -46,7 +51,14 @@ export default function ResultsPage() {
 						semester={semester}
 						onSemesterChange={setSemester}
 					/>
-					<StudentResultsActions className='hidden lg:flex' />
+					<StudentResultsActions
+						className='hidden lg:flex'
+						grades={data?.grades}
+						sessionLabel={selectedSession?.name}
+						semesterLabel={semesterLabel}
+						studentId={dashboard?.student?.student_id}
+						onViewTranscript={() => setShowTranscript(true)}
+					/>
 				</div>
 			</div>
 			<div className='flex flex-col gap-5'>
@@ -57,8 +69,21 @@ export default function ResultsPage() {
 					isLoading={isLoading}
 					isError={isError}
 				/>
-				<StudentResultsActions className='lg:hidden' />
+				<StudentResultsActions
+					className='lg:hidden'
+					grades={data?.grades}
+					sessionLabel={selectedSession?.name}
+					semesterLabel={semesterLabel}
+					studentId={dashboard?.student?.student_id}
+					onViewTranscript={() => setShowTranscript(true)}
+				/>
 			</div>
+
+			<AnimatePresence>
+				{showTranscript && (
+					<TranscriptModal onClose={() => setShowTranscript(false)} />
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }

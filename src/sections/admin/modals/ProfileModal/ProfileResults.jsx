@@ -1,12 +1,13 @@
-import { useState } from 'react';
 import AcademicSession from '../../../student/results/AcademicSession';
 import { useSelectedSession } from '../../../../hooks/useSelectedSession';
 import { useAdminStudentGrades } from '../../../../hooks/admin/useAdminStudentGrades';
 import { gradeColor } from '../../../../constants/grading';
 
 export default function ProfileResults({ user }) {
-	const { sessionId, setSessionId } = useSelectedSession();
-	const [semester, setSemester] = useState('first');
+	// Opening a student's profile mid-second-semester used to show an empty
+	// first-semester table, which reads as "this student has no results".
+	const { sessionId, setSessionId, semester, setSemester } =
+		useSelectedSession();
 
 	const { data, isLoading } = useAdminStudentGrades(user?.rawId, {
 		sessionId,

@@ -8,7 +8,7 @@ const columns = [
 	{ key: 'name', label: 'Name' },
 	{ key: 'contact', label: 'Contact' },
 	{ key: 'department', label: 'Department' },
-	{ key: 'qualification', label: 'Courses' },
+	{ key: 'coursesCount', label: 'Courses' },
 	{ key: 'joinYear', label: 'Year Registered', className: 'text-nowrap' },
 	{ key: 'actions', label: 'Actions', className: 'text-center' },
 ];

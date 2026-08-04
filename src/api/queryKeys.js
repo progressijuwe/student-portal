@@ -30,6 +30,16 @@ export const queryKeys = {
 		detail: () => ['profile', 'detail'],
 	},
 
+	/*
+	 * Keyed by role because the endpoint is role-scoped: signing out of a
+	 * student account and into a lecturer one on the same browser must not
+	 * serve the student's notifications from cache.
+	 */
+	notifications: {
+		all: () => ['notifications'],
+		list: (role) => ['notifications', role],
+	},
+
 	admin: {
 		all: () => ['admin'],
 		dashboard: () => ['admin', 'dashboard'],
@@ -56,6 +66,10 @@ export const queryKeys = {
 		],
 
 		courses: (params = {}) => ['admin', 'courses', params],
+		offerings: (params = {}) => ['admin', 'offerings', params],
+		sessions: (params = {}) => ['admin', 'sessions', params],
+		venues: (params = {}) => ['admin', 'venues', params],
+		timetable: (params = {}) => ['admin', 'timetable', params],
 		registrations: (params = {}) => ['admin', 'registrations', params],
 		results: (params = {}) => ['admin', 'results', params],
 		resultDetail: (offeringId, params = {}) => [
@@ -71,6 +85,7 @@ export const queryKeys = {
 		all: () => ['lecturer'],
 		dashboard: () => ['lecturer', 'dashboard'],
 		courses: () => ['lecturer', 'courses'],
+		timetable: () => ['lecturer', 'timetable'],
 		offeringStudents: (offeringId) => [
 			'lecturer',
 			'courses',
@@ -86,6 +101,7 @@ export const queryKeys = {
 		courses: () => ['student', 'courses'],
 		timetable: () => ['student', 'timetable'],
 		grades: (params = {}) => ['student', 'grades', params],
+		transcript: () => ['student', 'transcript'],
 		gpa: () => ['student', 'gpa'],
 		availableOfferings: (params = {}) => [
 			'student',

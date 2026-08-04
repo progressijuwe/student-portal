@@ -3,15 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CourseCard from '../../sections/student/courseRegistration/CourseCard';
 import UnitLoadSummary from '../../sections/student/courseRegistration/UnitLoadSummary';
 import MyRegistrations from '../../sections/student/courseRegistration/MyRegistrations';
+import RegistrationClosed from '../../sections/student/courseRegistration/RegistrationClosed';
+import ConfirmRegistrationModal from '../../sections/student/courseRegistration/ConfirmRegistrationModal';
 import SearchInput from '../../components/ui/SearchInput';
 import { useAvailableOfferings } from '../../hooks/student/useAvailableOfferings';
 import { useSubmitRegistration } from '../../hooks/student/useSubmitRegistration';
 import { useMyEnrollments } from '../../hooks/student/useMyEnrollments';
 import { useAcademicRules } from '../../hooks/useAcademicRules';
-import { useAcademicSessions } from '../../hooks/useAcademicSessions';
+import { useSelectedSession } from '../../hooks/useSelectedSession';
 import { transformOffering } from '../../utils/transformOffering';
 
-const SEMESTER = 'first'; // TODO: wire to an actual semester selector if needed later
+const SEMESTERS = [
+	{ value: 'first', label: '1st Semester' },
+	{ value: 'second', label: '2nd Semester' },
+];
 
 const TABS = {
 	REGISTER: 'register',
@@ -21,28 +26,38 @@ const TABS = {
 export default function CourseRegistrationPage() {
 	const [activeTab, setActiveTab] = useState(TABS.REGISTER);
 
+	// Was a module-level `const SEMESTER = 'first'`, which made second-semester
+	// registration unreachable: offerings existed and the API returned them, but
+	// this page could only ever ask for the first semester, so students saw
+	// "No courses are available for registration right now" for half the year.
+	const { sessionId, semester, setSemester, selectedSession } =
+		useSelectedSession();
+
 	const {
 		data: rawOfferings,
 		isLoading,
 		isError,
-	} = useAvailableOfferings({ semester: SEMESTER });
+	} = useAvailableOfferings({ semester });
 	const { data: rules } = useAcademicRules();
-	const { data: sessions } = useAcademicSessions();
 	const {
 		mutate: submitRegistration,
 		isPending: isSubmitting,
 		error: submitError,
 	} = useSubmitRegistration();
 
-	const currentSessionId = sessions?.find((s) => s.is_current)?.id;
 	const {
-		data: myEnrollments,
+		data: myRegistrationData,
 		isLoading: isLoadingEnrollments,
 		isError: isEnrollmentsError,
-	} = useMyEnrollments({
-		sessionId: currentSessionId,
-		semester: SEMESTER,
-	});
+	} = useMyEnrollments({ sessionId, semester });
+
+	const myEnrollments = myRegistrationData?.enrollments;
+	const registration = myRegistrationData?.registration;
+
+	// Decided server-side by the same rule that rejects a second submission, so
+	// the picker is hidden for exactly the students the API would turn away.
+	// Undefined while loading — the picker stays hidden until we know.
+	const canRegister = registration ? registration.can_register : false;
 
 	const availableCourses = useMemo(
 		() => (rawOfferings ?? []).map(transformOffering),
@@ -53,6 +68,7 @@ export default function CourseRegistrationPage() {
 	const [search, setSearch] = useState('');
 	const [summaryOpen, setSummaryOpen] = useState(false);
 	const [submitSuccess, setSubmitSuccess] = useState(false);
+	const [isConfirming, setIsConfirming] = useState(false);
 
 	const totalUnits = selected.reduce((sum, c) => sum + c.units, 0);
 
@@ -81,12 +97,19 @@ export default function CourseRegistrationPage() {
 		);
 	};
 
-	const handleSubmit = () => {
+	// Opening the confirmation is the button's job; submitting is the dialog's.
+	const handleRequestSubmit = () => {
 		setSubmitSuccess(false);
+		setSummaryOpen(false);
+		setIsConfirming(true);
+	};
+
+	const handleConfirmedSubmit = () => {
 		submitRegistration(
 			selected.map((c) => c.offeringId),
 			{
 				onSuccess: () => {
+					setIsConfirming(false);
 					setSubmitSuccess(true);
 					setSelected([]);
 				},
@@ -94,14 +117,56 @@ export default function CourseRegistrationPage() {
 		);
 	};
 
+	// Selections are offerings of the semester they were picked in, so they
+	// cannot carry across — submitting a first-semester basket against the
+	// second semester's credit limit is not a coherent request.
+	const handleSemesterChange = (next) => {
+		setSemester(next);
+		setSelected([]);
+		setSubmitSuccess(false);
+		setIsConfirming(false);
+	};
+
 	const minUnits = rules?.min_credit_units_per_semester ?? 0;
 	const maxUnits = rules?.max_credit_units_per_semester ?? 24;
 
 	return (
 		<div className='py-6 px-5 lg:px-8 flex flex-col gap-6'>
-			<h1 className='text-xl lg:text-3xl font-semibold text-black'>
-				Course Registration
-			</h1>
+			<div className='flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between'>
+				<div className='flex flex-col gap-1'>
+					<h1 className='text-xl lg:text-3xl font-semibold text-black'>
+						Course Registration
+					</h1>
+					{selectedSession && (
+						<p className='text-sm text-label'>
+							{selectedSession.name}
+						</p>
+					)}
+				</div>
+
+				<div className='flex flex-col gap-1.5 lg:w-56'>
+					<label
+						htmlFor='registration-semester'
+						className='text-xs font-medium text-dark'
+					>
+						Semester
+					</label>
+					<select
+						id='registration-semester'
+						value={semester}
+						onChange={(event) =>
+							handleSemesterChange(event.target.value)
+						}
+						className='rounded-[10px] border border-brand-orange bg-white p-2.5 text-xs text-black'
+					>
+						{SEMESTERS.map((option) => (
+							<option key={option.value} value={option.value}>
+								{option.label}
+							</option>
+						))}
+					</select>
+				</div>
+			</div>
 
 			{/* Tabs */}
 			<div className='flex gap-6 border-b border-border'>
@@ -148,7 +213,7 @@ export default function CourseRegistrationPage() {
 						</p>
 					)}
 
-					{isLoading ? (
+					{isLoadingEnrollments || isLoading ? (
 						<p className='text-sm text-label'>
 							Loading available courses...
 						</p>
@@ -156,6 +221,16 @@ export default function CourseRegistrationPage() {
 						<p className='text-sm text-red-500'>
 							Couldn't load available courses.
 						</p>
+					) : !canRegister ? (
+						/* Registration is once per semester, so this replaces
+						   the picker entirely rather than letting a basket be
+						   built that the API would reject. */
+						<RegistrationClosed
+							registration={registration}
+							onViewRegistrations={() =>
+								setActiveTab(TABS.MY_REGISTRATIONS)
+							}
+						/>
 					) : (
 						<div className='flex gap-6 items-start'>
 							{/* Left — course list */}
@@ -196,7 +271,7 @@ export default function CourseRegistrationPage() {
 								<UnitLoadSummary
 									selected={selected}
 									onRemove={handleRemove}
-									onSubmit={handleSubmit}
+									onSubmit={handleRequestSubmit}
 									minUnits={minUnits}
 									maxUnits={maxUnits}
 									isSubmitting={isSubmitting}
@@ -205,18 +280,21 @@ export default function CourseRegistrationPage() {
 						</div>
 					)}
 
-					{/* Mobile sticky button */}
-					<div className='lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-border z-40'>
-						<button
-							onClick={() => setSummaryOpen(true)}
-							className='w-full bg-brand-red text-white py-3 rounded-[10px] text-sm font-semibold flex items-center justify-center gap-2'
-						>
-							Unit Load Summary
-							<span className='bg-white text-brand-red text-xs font-bold px-2 py-0.5 rounded-full'>
-								{totalUnits} units
-							</span>
-						</button>
-					</div>
+					{/* Mobile sticky button — hidden once registration is
+					    closed, since there is nothing to submit. */}
+					{canRegister && (
+						<div className='lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-border z-40'>
+							<button
+								onClick={() => setSummaryOpen(true)}
+								className='w-full bg-brand-red text-white py-3 rounded-[10px] text-sm font-semibold flex items-center justify-center gap-2'
+							>
+								Unit Load Summary
+								<span className='bg-white text-brand-red text-xs font-bold px-2 py-0.5 rounded-full'>
+									{totalUnits} units
+								</span>
+							</button>
+						</div>
+					)}
 
 					{/* Mobile bottom sheet */}
 					<AnimatePresence>
@@ -245,16 +323,40 @@ export default function CourseRegistrationPage() {
 									<UnitLoadSummary
 										selected={selected}
 										onRemove={handleRemove}
-										onSubmit={() => {
-											handleSubmit();
-											setSummaryOpen(false);
-										}}
+										onSubmit={handleRequestSubmit}
 										minUnits={minUnits}
 										maxUnits={maxUnits}
 										isSubmitting={isSubmitting}
 									/>
 								</motion.div>
 							</>
+						)}
+					</AnimatePresence>
+
+					<AnimatePresence>
+						{isConfirming && (
+							<ConfirmRegistrationModal
+								selected={selected}
+								totalUnits={totalUnits}
+								minUnits={minUnits}
+								maxUnits={maxUnits}
+								sessionName={selectedSession?.name}
+								semesterLabel={
+									SEMESTERS.find(
+										(option) => option.value === semester,
+									)?.label
+								}
+								isSubmitting={isSubmitting}
+								error={
+									submitError
+										? (submitError.response?.data
+												?.message ??
+											'Failed to submit registration.')
+										: null
+								}
+								onConfirm={handleConfirmedSubmit}
+								onClose={() => setIsConfirming(false)}
+							/>
 						)}
 					</AnimatePresence>
 				</>

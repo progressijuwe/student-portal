@@ -94,12 +94,23 @@ export default function TimetableClass() {
 						))
 					)}
 				</div>
-				{dayClasses.length >= 1 && (
-					<ClassPlaceholder
-						room={nextClass?.room}
-						building={nextClass?.building}
-					/>
-				)}
+				{/* Once the last class of the day has started there is no
+				    "next" one, so fall back to the most recent slot. Passing
+				    an undefined venue here is what used to make the card
+				    render its hardcoded placeholder address. */}
+				{dayClasses.length >= 1 &&
+					(() => {
+						const shown =
+							nextClass ?? dayClasses[dayClasses.length - 1];
+
+						return (
+							<ClassPlaceholder
+								room={shown.room}
+								building={shown.building}
+								isNext={Boolean(nextClass)}
+							/>
+						);
+					})()}
 			</div>
 		</div>
 	);

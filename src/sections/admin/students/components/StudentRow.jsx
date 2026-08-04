@@ -10,6 +10,13 @@ export default function StudentRow({ student, onView, onEdit, onDelete }) {
 			<td className='py-4 px-2 font-semibold'>{student.id}</td>
 			<td className='py-4 px-2'>
 				<p className='font-medium text-black'>{student.name}</p>
+				{/* Nothing is emailed, so this badge is how a locked-out
+				    student becomes visible to the admin at all. */}
+				{student.resetRequestedAt && (
+					<span className='mt-1 inline-block rounded-[10px] bg-[#FFF7ED] px-2 py-0.5 text-xs font-medium text-[#9F0712]'>
+						Reset requested
+					</span>
+				)}
 			</td>
 			<td className='py-4 px-2 text-label font-medium'>
 				<span className='flex items-center gap-1'>

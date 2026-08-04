@@ -106,7 +106,7 @@ export default function Sidebar({ isOpen = false, onClose }) {
 											<item.Icon
 												className={`size-5 ${
 													isActive
-														? '[&_path]:stroke-brand-orange'
+														? '[&_path]:stroke-brand-orange [&_path]:fill-none'
 														: '[&_path]:stroke-body'
 												}`}
 											/>

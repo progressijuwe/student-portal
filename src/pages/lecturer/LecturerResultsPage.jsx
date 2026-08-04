@@ -31,8 +31,11 @@ export default function LecturerResultsPage() {
 		courses.find((course) => course.offeringId === selectedOfferingId) ??
 		null;
 
-	const { data: studentsData, isLoading: studentsLoading } =
-		useOfferingStudents(selectedOfferingId);
+	const {
+		data: studentsData,
+		isSuccess: studentsLoaded,
+		isError: studentsError,
+	} = useOfferingStudents(selectedOfferingId);
 
 	if (coursesLoading) {
 		return (
@@ -65,7 +68,9 @@ export default function LecturerResultsPage() {
 				key={selectedOfferingId}
 				course={selectedCourse}
 				students={studentsData?.students ?? []}
-				isLoading={studentsLoading}
+				totalStudents={studentsData?.meta?.total}
+				isSuccess={studentsLoaded}
+				isError={studentsError}
 			/>
 		</div>
 	);

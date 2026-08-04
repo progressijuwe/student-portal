@@ -14,10 +14,12 @@ export default function UserCard({ user, onView, onEdit, onDelete }) {
 		level,
 		enrollmentYear,
 		joinYear,
-		courses,
+		coursesCount,
 	} = user;
 
-	const levelOrCourseLoad = level ?? courses?.length;
+	// Students are described by their level, lecturers by their course load.
+	// `coursesCount` replaces a `courses` array the API never sent.
+	const levelOrCourseLoad = level ?? coursesCount;
 	const year = enrollmentYear ?? joinYear;
 	// Lecturers carry a titled displayName; students only have a plain name.
 	const heading = displayName ?? name;
@@ -46,8 +48,17 @@ export default function UserCard({ user, onView, onEdit, onDelete }) {
 				</DetailItem>
 				<DetailItem icon={DeptIcon} label='Department'>
 					{department}
-					{levelOrCourseLoad &&
-						` | ${levelOrCourseLoad} ${level ? 'level' : 'courses'}`}
+					{/* Compared against null rather than tested for truthiness:
+					    a lecturer with no courses has a count of 0, and
+					    `0 && …` renders a bare "0" in JSX. */}
+					{levelOrCourseLoad != null &&
+						` | ${levelOrCourseLoad} ${
+							level
+								? 'level'
+								: levelOrCourseLoad === 1
+									? 'course'
+									: 'courses'
+						}`}
 				</DetailItem>
 				<DetailItem
 					icon={CalendarIcon}

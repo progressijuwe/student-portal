@@ -11,7 +11,12 @@ const LEVEL_OPTIONS = [
 	{ value: '500', label: '500' },
 ];
 
-function FilterSelect({ label, value, onChange, options, disabled }) {
+/**
+ * Exported so a page with filters of its own — the offerings toolbar adds
+ * session, semester, lecturer and status — can render them identically to the
+ * shared ones instead of hand-rolling a second select style.
+ */
+export function FilterSelect({ label, value, onChange, options, disabled }) {
 	const id = useId();
 
 	return (

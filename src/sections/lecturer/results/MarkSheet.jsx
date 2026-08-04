@@ -25,8 +25,14 @@ function toRows(students = []) {
 			examScore: grade?.exam_score ?? '',
 			letterGrade: grade?.letter_grade ?? '',
 			status: STATUS_LABELS[grade?.status] ?? 'Draft',
+			// Only present on a rejected grade — the API omits the key entirely
+			// otherwise. This is the admin's instruction for what to correct,
+			// and the only place the lecturer ever sees it.
+			rejectionReason: grade?.rejection_reason ?? '',
 			// An approved grade is final; a pending one is awaiting review and
-			// must not be edited underneath the admin looking at it.
+			// must not be edited underneath the admin looking at it. A rejected
+			// one is precisely what the lecturer is being asked to change, so
+			// it stays editable.
 			locked: grade?.status === 'approved' || grade?.status === 'pending',
 		};
 	});
@@ -40,10 +46,37 @@ function toRows(students = []) {
  * the rows in the page component and re-seeded them from an effect whenever the
  * server data changed — which silently discarded in-progress edits on any
  * background refetch, and triggered a cascading re-render each time.
+ *
+ * Seeding must wait for the query to succeed. `useState(() => toRows(students))`
+ * ran on the first render, when the students query was still in flight and
+ * `students` was the empty fallback — and since nothing re-seeded afterwards,
+ * the sheet stayed permanently empty on every cold load. Re-seeding on each
+ * prop change is not the fix either: saving a draft invalidates this query, so
+ * that would throw away whatever the lecturer had typed since.
+ *
+ * The gate is `isSuccess` specifically, not `!isLoading`. A remounted query is
+ * `pending` for a render or two before it starts fetching, and react-query
+ * reports `isLoading` as false in that window — so keying off it seeded from
+ * the empty fallback again, just with tighter timing.
  */
-export default function MarkSheet({ course, students, isLoading }) {
-	const [rows, setRows] = useState(() => toRows(students));
+export default function MarkSheet({
+	course,
+	students,
+	totalStudents,
+	isSuccess,
+	isError,
+}) {
+	const [rows, setRows] = useState([]);
+	const [isSeeded, setIsSeeded] = useState(false);
 	const [searchTerm, setSearchTerm] = useState('');
+
+	// Adjusting state during render is React's documented alternative to an
+	// effect for "derive once, when the data is finally there": it re-renders
+	// before anything reaches the DOM, so there is no empty-table flash.
+	if (!isSeeded && isSuccess) {
+		setIsSeeded(true);
+		setRows(toRows(students));
+	}
 
 	const filtered = useMemo(() => {
 		const term = searchTerm.trim().toLowerCase();
@@ -65,6 +98,16 @@ export default function MarkSheet({ course, students, isLoading }) {
 		(row) => row.status === 'Approved',
 	).length;
 
+	const rejectedCount = rows.filter(
+		(row) => row.status === 'Rejected',
+	).length;
+
+	// The class list and the batch-submit endpoint share a 500-row ceiling, so a
+	// larger cohort is a genuine system limit rather than a display quirk. It is
+	// stated plainly: silently grading the first 500 of 600 students and
+	// reporting success would be the worst possible outcome here.
+	const isTruncated = isSeeded && totalStudents > rows.length;
+
 	return (
 		<>
 			{course && (
@@ -72,12 +115,40 @@ export default function MarkSheet({ course, students, isLoading }) {
 					{...course}
 					submittedCount={submittedCount}
 					approvedCount={approvedCount}
+					rejectedCount={rejectedCount}
 				/>
+			)}
+
+			{isTruncated && (
+				<p
+					role='alert'
+					className='rounded-[10px] bg-[#FFF7ED] px-4 py-3 text-sm text-[#9F0712]'
+				>
+					<span className='font-semibold'>
+						Showing {rows.length} of {totalStudents} students.
+					</span>{' '}
+					This course has more students than can be graded in one
+					submission. Contact the administrator before entering marks
+					— anything you submit here would cover only the students
+					listed below.
+				</p>
 			)}
 
 			<StudentSearch onSearch={setSearchTerm} />
 
-			{isLoading ? (
+			{isError ? (
+				// Without this the failed request fell through to the table,
+				// which renders "No results found" — telling the lecturer the
+				// class is empty when in fact nothing was ever loaded.
+				<p
+					className='py-10 text-center text-sm text-red-500'
+					role='alert'
+				>
+					Couldn't load the students for this course.
+				</p>
+			) : !isSeeded ? (
+				// Driven by the seed flag rather than the query's own loading
+				// flag, so the table is never shown before it holds real rows.
 				<p
 					className='py-10 text-center text-sm text-label'
 					role='status'

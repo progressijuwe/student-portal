@@ -72,6 +72,53 @@ button {
 	cursor: pointer;
 }
 
+/*
+ * Printing.
+ *
+ * A transcript is a document people need on paper or as a PDF, and the browser
+ * already turns a well-marked-up page into either. That is why there is no PDF
+ * library here: adding one would mean a new dependency, a second rendering
+ * path, and a template to keep in step with the screen.
+ *
+ * `visibility` rather than `display` so the printed region keeps its layout —
+ * collapsing every ancestor would drop the element out of the flow with it.
+ */
+@media print {
+	body * {
+		visibility: hidden;
+	}
+
+	[data-print-region],
+	[data-print-region] * {
+		visibility: visible;
+	}
+
+	[data-print-region] {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		max-height: none;
+		overflow: visible;
+		border: 0;
+		box-shadow: none;
+		background: #fff;
+	}
+
+	/* Controls belong on screen, never on the page that comes out. */
+	[data-print-hide] {
+		display: none !important;
+	}
+
+	/* Keep a semester's courses from being split across two sheets. */
+	[data-print-group] {
+		break-inside: avoid;
+	}
+
+	@page {
+		margin: 16mm;
+	}
+}
+
 /* Respect users who have asked their OS to reduce motion. */
 @media (prefers-reduced-motion: reduce) {
 	html {

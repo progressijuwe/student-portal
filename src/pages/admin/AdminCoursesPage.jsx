@@ -6,6 +6,8 @@ import {
 	useSetCourseActive,
 } from '../../hooks/admin/useAdminCourses';
 import { useModal } from '../../hooks/useModal';
+import { useCsvDownload } from '../../hooks/useCsvDownload';
+import { exportCourses } from '../../api/admin';
 import { useDepartments } from '../../hooks/useDepartments';
 import { buildCourseFilterFields } from '../../constants/filterConfig';
 import { getErrorMessage } from '../../utils/getErrorMessage';
@@ -32,20 +34,28 @@ const MODAL = {
 export default function AdminCoursesPage() {
 	const { search, filters, page, setSearch, setFilters, setPage } =
 		useCourseQuery();
-	const { modal, open, close } = useModal();
+	const { modal, open, close, openBriefly } = useModal();
 	const { data: departments = [] } = useDepartments();
 	const setCourseActive = useSetCourseActive();
+	const exportCsv = useCsvDownload();
 
 	const debouncedSearch = useDebouncedValue(search);
 
-	const { data, isLoading, isError, error, refetch } = useAdminCourses({
-		page,
+	// Named once so the export sends exactly the filters the grid was built
+	// from. `page` is deliberately excluded: the export covers the whole
+	// matching set, not the slice on screen.
+	const exportParams = {
 		search: debouncedSearch || undefined,
 		faculty_id: filters.faculty_id || undefined,
 		department_id: filters.department_id || undefined,
 		level: filters.level || undefined,
 		semester: filters.semester || undefined,
 		type: filters.type || undefined,
+	};
+
+	const { data, isLoading, isError, error, refetch } = useAdminCourses({
+		...exportParams,
+		page,
 	});
 
 	const courses = data?.data ?? [];
@@ -54,10 +64,9 @@ export default function AdminCoursesPage() {
 	const handleEdit = (course) => open(MODAL.EDIT, course);
 	const handleDelete = (course) => open(MODAL.DELETE, course);
 
-	const handleSuccess = (type) => {
-		open(type);
-		setTimeout(close, 2000);
-	};
+	// openBriefly cancels its own timer if anything else opens meanwhile, so a
+	// confirmation cannot dismiss a dialog the admin opened after it.
+	const handleSuccess = (type) => openBriefly(type);
 
 	// "Delete" deactivates. Every foreign key into courses is restrictOnDelete,
 	// so a real delete would either fail or orphan a transcript.
@@ -76,6 +85,14 @@ export default function AdminCoursesPage() {
 				onSearch={setSearch}
 				onAdd={() => open(MODAL.ADD)}
 				onFilter={() => open(MODAL.FILTER)}
+				onExport={() =>
+					exportCsv.download(
+						() => exportCourses(exportParams),
+						`courses-${new Date().toISOString().slice(0, 10)}.csv`,
+					)
+				}
+				isExporting={exportCsv.isDownloading}
+				exportError={exportCsv.error}
 				addLabel='Add Course'
 				searchPlaceholder='Search courses'
 			/>

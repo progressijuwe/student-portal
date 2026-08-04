@@ -1,10 +1,10 @@
 import { useAuth } from '../../../context/useAuth';
 import Settings from '../../../assets/svg/settings.svg?react';
-import Notifs from '../../../assets/svg/notification-bell.svg?react';
 import Hamburger from '../../../assets/svg/hamburger.svg?react';
+import NotificationBell from '../../../components/ui/NotificationBell';
 import Logo from '../../../assets/images/portal-logo.png';
 import { Roles } from '../../../constants/roles';
-import { getLevel } from '../../../utils/getLevel';
+import { formatLevel } from '../../../utils/formatLevel';
 import Avatar from '../../../components/ui/Avatar';
 
 export function Header({ onMenuClick }) {
@@ -32,10 +32,15 @@ export function Header({ onMenuClick }) {
 
 	const profileImage = user?.profile_photo_url;
 
+	// Joined from the parts that are actually present. The level comes from the
+	// profile, which the first paint may not have yet — interpolating it
+	// directly left the subtitle reading ", Software Engineering".
 	const subtitle = isStudent
-		? `${getLevel(user?.entry_year)}, ${user?.department?.name || ''}`
+		? [formatLevel(user?.level), user?.department?.name]
+				.filter(Boolean)
+				.join(', ')
 		: isLecturer
-			? `Lecturer, ${user?.department?.name || ''}`
+			? ['Lecturer', user?.department?.name].filter(Boolean).join(', ')
 			: '';
 
 	return (
@@ -64,16 +69,17 @@ export function Header({ onMenuClick }) {
 						<p className='text-xs text-label'>{subtitle}</p>
 					)}
 				</div>
+				<div className='lg:hidden flex flex-col text-black'>
+					<NotificationBell />
+				</div>
 			</div>
 
-			<div className='items-center gap-6 hidden lg:flex'>
-				<button type='button' aria-label='Settings'>
+			<div className='hidden lg:flex items-center gap-6'>
+				<button type='button' aria-label='Settings' disabled>
 					<Settings />
 				</button>
 
-				<button type='button' aria-label='Notifications'>
-					<Notifs className='w-6 h-6 fill-brand-red' />
-				</button>
+				<NotificationBell />
 			</div>
 		</header>
 	);

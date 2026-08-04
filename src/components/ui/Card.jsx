@@ -21,7 +21,11 @@ export default function Card({ label, icon, value, suffix, percent, footer }) {
 							</span>
 						)}
 					</div>
-					{percent && (
+					{/* Compared against null rather than tested for truthiness:
+					    a student with no credits yet has percent 0, and
+					    `0 && …` renders a bare "0" next to the figure. An
+					    empty ring is the right thing to show at 0%. */}
+					{percent != null && (
 						<div className='shrink-0 aspect-square'>
 							<DonutChart percent={percent} size={44} />
 						</div>

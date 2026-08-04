@@ -93,7 +93,7 @@ export default function QuickActions() {
 							style={{ backgroundColor: item.bgColor }}
 						>
 							<item.Icon
-								className={`size-5 lg:size-6 ${item.iconClass}`}
+								className={`size-4 lg:size-5 ${item.iconClass}`}
 							/>
 
 							{item.PlusIcon && (

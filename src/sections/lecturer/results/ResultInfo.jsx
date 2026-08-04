@@ -1,6 +1,7 @@
 import Results from '../../../assets/svg/results.svg?react';
 import Letter from '../../../assets/svg/letter.svg?react';
 import Approved from '../../../assets/svg/approved.svg?react';
+import Warning from '../../../assets/svg/warning.svg?react';
 import GradingInfo from './GradingInfo';
 import ResultTable from './ResultTable';
 
@@ -9,6 +10,7 @@ export default function ResultInfo({
 	title,
 	submittedCount,
 	approvedCount,
+	rejectedCount = 0,
 }) {
 	const submitted = {
 		bg: '#EFF6FF',
@@ -21,6 +23,12 @@ export default function ResultInfo({
 		border: '#B9F8CF',
 		text: '#016630',
 		value: '#0D542B',
+	};
+	const rejected = {
+		bg: '#FEF2F2',
+		border: '#FFC9C9',
+		text: '#9F0712',
+		value: '#82181A',
 	};
 	const stats = [
 		{
@@ -35,6 +43,18 @@ export default function ResultInfo({
 			Icon: Approved,
 			...approved,
 		},
+		// Only once there is something to correct. A permanent "0 returned"
+		// card would read as a standing reprimand on every mark sheet.
+		...(rejectedCount > 0
+			? [
+					{
+						label: 'Returned for correction',
+						count: rejectedCount,
+						Icon: Warning,
+						...rejected,
+					},
+				]
+			: []),
 	];
 
 	return (

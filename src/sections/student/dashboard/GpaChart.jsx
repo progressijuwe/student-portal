@@ -99,8 +99,11 @@ export default function GpaChart() {
 		);
 	}
 
-	// Records assumed newest-first (controller uses ->latest()) — reverse for chronological chart order
-	const chronological = [...data.records].reverse();
+	// The API orders records by academic period, oldest first, so they are
+	// already in the order the chart plots them. This used to reverse the array
+	// on the assumption that the controller returned newest-first; it did not,
+	// so the trend line ran backwards and a rising GPA was drawn as a decline.
+	const chronological = data.records;
 	const labels = chronological.map(
 		(r) =>
 			`${r.session?.name ?? ''} ${r.semester === 'first' ? '1st' : '2nd'} Sem`,

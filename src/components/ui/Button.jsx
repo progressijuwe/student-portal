@@ -18,7 +18,7 @@ export function Button({
 	return (
 		<button
 			type={type}
-			className={`${base} ${variants[variant]} ${classname}`}
+			className={`${base} ${variants[variant]} ${classname} disabled:cursor-not-allowed disabled:opacity-50`}
 			{...props}
 		>
 			{children}
