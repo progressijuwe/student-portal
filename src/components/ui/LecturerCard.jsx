@@ -11,7 +11,7 @@ export default function LecturerCard({ label, icon, bgColor, color, value }) {
             .icon-${color.replace('#', '')} path { stroke: ${color} !important; }
           `}</style>
 					<span
-						className={`flex justify-center items-center size-12 icon-${color.replace('#', '')} [&>svg]:w-10 [&>svg]:h-10 lg:[&>svg]:w-6 lg:[&>svg]:h-6`}
+						className={`flex justify-center items-center size-12 icon-${color.replace('#', '')} [&>svg]:w-4 [&>svg]:h-4 lg:[&>svg]:w-5 lg:[&>svg]:h-5`}
 					>
 						{icon}
 					</span>
